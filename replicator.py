@@ -1,6 +1,9 @@
 import argparse
+from matplotlib import pyplot as plt
 import numpy as np
+from scipy import stats
 from tqdm import tqdm
+from collections import deque
 
 
 def plurality(cand_pos, voter_dsn=None):
@@ -31,8 +34,8 @@ def plurality(cand_pos, voter_dsn=None):
 
 
 def replicator(k, n, gens, symmetry=False, initial_dsn=None, voter_dsn=None,
-               memory=1, top_h=1, uniform_noise_epsilon=0, 
-               perturbation_noise_stdev=0, n_bins=100):
+               memory=1, uniform_eps=0, perturb_stdev=0,
+               n_bins=100):
     """
     Run the replicator dynamics with k candidates per election, n elections per
     generation, and the given number of generations. Return per-generation
@@ -49,8 +52,6 @@ def replicator(k, n, gens, symmetry=False, initial_dsn=None, voter_dsn=None,
                  distribution F_0; if None (default), start uniform
     @voter_dsn a scipy.stats distribution; if None (default), use uniform voters
     @memory the number of generations back to sample winnners from (default 1)
-    @top_h instead of just sampling winners, sample from the top h plurality
-           shares (default 1; i.e., only sample winners)
     @uniform_noise_epsilon the fraction of candidate which are uniform rather
                            than winner samplers (default 0)
     @perturbation_noise_stdev the amount by which to perturb each point with
@@ -61,9 +62,56 @@ def replicator(k, n, gens, symmetry=False, initial_dsn=None, voter_dsn=None,
             array with winner counts in each bin and bin_edges is a length 
             nbins+1 numpy array of the bin edges (as in np.histogram)
 
+    TODO: add top h support
     """
-    ... #TODO
+    if initial_dsn is None:
+        initial_dsn = stats.uniform(0, 1)
+
+    # maintain a queue of the winners in the last memory generations
+    prev_winners = deque(maxlen=memory)
+    prev_winners.append(initial_dsn.rvs(n))
+
+    # save initial candidate distribution
+    hists = []
+    bins = np.linspace(0, 1, n_bins)
+    hist, bin_edges = np.histogram(prev_winners[0], bins=bins)
+    hists.append(hist)
+
+    for t in range(gens):
+        # combine winner positions from all remembered generations
+        sample_from = np.concatenate(prev_winners)
+        elections = np.random.choice(sample_from, (n, k))
+
+        # add perturbation noise
+        if perturb_stdev > 0:
+            elections += np.random.normal(0, perturb_stdev, (n, k))
+            elections = elections.clip(0, 1)
+
+        # add an epsilon-fraction of uniform candidates
+        if uniform_eps > 0:
+            uniform_idxs = np.random.binomial(1, uniform_eps, (n, k)) == 1
+            elections[uniform_idxs] = np.random.rand(n, k)[uniform_idxs]
+
+        # mirror candidates if using symmetry
+        if symmetry:
+            flip_idx = np.random.randint(0, 2, (n, k)) == 1
+            elections[flip_idx] = (1 - elections)[flip_idx]
+
+        # get winner positions
+        winners = plurality(elections, voter_dsn)
+        prev_winners.append(winners)
+        hist, bin_edges = np.histogram(winners, bins=bins)
+        hists.append(hist)
+
+    return np.array(hists), bin_edges
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     
+
+    hists, edges = replicator(8, 50_000, 500, perturb_stdev=0.001, 
+                              uniform_eps=0.01, memory=3)
+    plt.imshow(np.log(1+hists.T), cmap='afmhot_r', aspect='auto', 
+               interpolation='nearest')
+    plt.show()
