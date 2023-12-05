@@ -110,8 +110,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     
 
-    hists, edges = replicator(8, 50_000, 500, perturb_stdev=0.001, 
-                              uniform_eps=0.01, memory=3)
+    hists, edges = replicator(k=5, n=50_000, gens=500, perturb_stdev=0.001, 
+                              uniform_eps=0.01, memory=1, 
+                              voter_dsn=stats.beta(5, 5))
     plt.imshow(np.log(1+hists.T), cmap='afmhot_r', aspect='auto', 
                interpolation='nearest')
     plt.show()
