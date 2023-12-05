@@ -67,7 +67,7 @@ def replicator(k, n, gens, symmetry=False, initial_dsn=None, voter_dsn=None,
     if initial_dsn is None:
         initial_dsn = stats.uniform(0, 1)
 
-    # maintain a queue of the winners in the last memory generations
+    # maintain a queue of the winners in the last @memory generations
     prev_winners = deque(maxlen=memory)
     prev_winners.append(initial_dsn.rvs(n))
 
