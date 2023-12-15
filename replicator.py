@@ -146,6 +146,7 @@ def replicator(
             sorted_cands, votes = plurality_votes(elections, voter_dsn)
             candidate_options = np.array([])
             for i in range(0, h):
+                # calculate top-i position
                 i_place_indexes = np.argpartition(votes, -(i + 1), axis=1)[
                     :, -(i + 1)
                 ].reshape(n, 1)
