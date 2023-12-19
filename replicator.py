@@ -6,35 +6,6 @@ from tqdm import tqdm
 from collections import deque
 
 
-def plurality(cand_pos, voter_dsn=None):
-    """
-    Compute the positions of the plurality winners in a collection of elections,
-    optionally with the given voter distribution (default: uniform voters).
-
-    @cand_pos an (n, k) numpy array (n = #elections, k = #candidates) of
-              candidate positions
-    @voter_dsn a scipy.stats distribution; if None (default), use uniform voters
-
-    @returns a length n numpy array of the winner positions in each election
-    """
-
-    n, k = cand_pos.shape
-    sorted_cands = np.sort(cand_pos, axis=1)
-    regions = np.column_stack(
-        (
-            np.zeros((n, 1)),
-            (sorted_cands[:, 1:] + sorted_cands[:, :-1]) / 2,
-            np.ones((n, 1)),
-        )
-    )
-    cdfs = regions if voter_dsn is None else voter_dsn.cdf(regions)
-    votes = np.diff(cdfs)
-    winner_idxs = np.argmax(votes, axis=1, keepdims=True)
-    winners = np.take_along_axis(sorted_cands, winner_idxs, axis=1).flatten()
-
-    return winners
-
-
 def plurality_votes(cand_pos, voter_dsn=None):
     """
     Compute the vote shares of candidates in a collection of elections,
@@ -64,6 +35,28 @@ def plurality_votes(cand_pos, voter_dsn=None):
     return sorted_cands, votes
 
 
+def plurality(cand_pos, voter_dsn=None):
+    """
+    Compute the positions of the plurality winners in a collection of elections,
+    optionally with the given voter distribution (default: uniform voters).
+
+    @cand_pos an (n, k) numpy array (n = #elections, k = #candidates) of
+              candidate positions
+    @voter_dsn a scipy.stats distribution; if None (default), use uniform voters
+
+    @returns a length n numpy array of the winner positions in each election
+    """
+
+    sorted_cands, votes = plurality_votes(cand_pos, voter_dsn)
+    winner_idxs = np.argmax(votes, axis=1, keepdims=True)
+    winners = np.take_along_axis(sorted_cands, winner_idxs, axis=1).flatten()
+
+    return winners
+
+
+# TODO :
+# add min, max position
+# fix top h to be faster with argsort
 def replicator(
     k,
     n,
@@ -75,6 +68,8 @@ def replicator(
     uniform_eps=0,
     perturb_stdev=0,
     h=1,
+    min=0,
+    max=1,
     n_bins=100,
 ):
     """
@@ -98,6 +93,8 @@ def replicator(
     @perturbation_noise_stdev the amount by which to perturb each point with
                               Gaussian noise (default 0)
     @h the number of top candidates to sample winners from (default 1)
+    @min the lowest possible candidate position (default 0)
+    @max the highest possible candidate position (default 1)
     @n_bins the number of bins in the returned histograms (default 100)
 
     @return the tuple (hists, bin_edges) where hists is a (gens, n_bins) numpy
@@ -105,27 +102,27 @@ def replicator(
             nbins+1 numpy array of the bin edges (as in np.histogram)
     """
     if initial_dsn is None:
-        initial_dsn = stats.uniform(0, 1)
+        initial_dsn = stats.uniform(min, max)
 
     # maintain a queue of the top @h candidates in the last @memory generations
-    prev_winners = deque(maxlen=memory)
-    prev_winners.append(initial_dsn.rvs(n))
+    prev_positions = deque(maxlen=memory)
+    prev_positions.append(initial_dsn.rvs(n))
 
     # save initial candidate distribution
     hists = []
     bins = np.linspace(0, 1, n_bins)
-    hist, bin_edges = np.histogram(prev_winners[0], bins=bins)
+    hist, bin_edges = np.histogram(prev_positions[0], bins=bins)
     hists.append(hist)
 
     for t in range(gens):
         # combine winner positions from all remembered generations
-        sample_from = np.concatenate(prev_winners)
+        sample_from = np.concatenate(prev_positions)
         elections = np.random.choice(sample_from, (n, k))
 
         # add perturbation noise
         if perturb_stdev > 0:
             elections += np.random.normal(0, perturb_stdev, (n, k))
-            elections = elections.clip(0, 1)
+            elections = elections.clip(min, max)
 
         # add an epsilon-fraction of uniform candidates
         if uniform_eps > 0:
@@ -140,16 +137,20 @@ def replicator(
         # get winner positions
         winners = plurality(elections, voter_dsn)
         if h == 1:
-            prev_winners.append(winners)
+            prev_positions.append(winners)
 
-        if h > 1:
+        elif h > 1:
             sorted_cands, votes = plurality_votes(elections, voter_dsn)
             candidate_options = np.array([])
             for i in range(0, h):
                 # calculate top-i position
-                i_place_indexes = np.argpartition(votes, -(i + 1), axis=1)[
+                i_place_indexes = np.argpartition(
+                    votes, -(i + 1), axis=1
+                )[  # maybe argsort
                     :, -(i + 1)
-                ].reshape(n, 1)
+                ].reshape(
+                    n, 1
+                )
                 i_place_indexes = np.hstack(
                     (np.arange(n).reshape(n, 1), i_place_indexes)
                 )
@@ -157,7 +158,7 @@ def replicator(
                     i_place_indexes[:, 0], i_place_indexes[:, 1]
                 ]
                 candidate_options = np.append(candidate_options, i_place_positions)
-            prev_winners.append(candidate_options)
+            prev_positions.append(candidate_options)
 
         hist, bin_edges = np.histogram(winners, bins=bins)
         hists.append(hist)
