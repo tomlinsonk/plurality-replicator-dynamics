@@ -54,9 +54,6 @@ def plurality(cand_pos, voter_dsn=None):
     return winners
 
 
-# TODO :
-# add min, max position
-# fix top h to be faster with argsort
 def replicator(
     k,
     n,
@@ -139,26 +136,16 @@ def replicator(
         if h == 1:
             prev_positions.append(winners)
 
+        # get top h positions
         elif h > 1:
             sorted_cands, votes = plurality_votes(elections, voter_dsn)
             candidate_options = np.array([])
-            for i in range(0, h):
-                # calculate top-i position
-                i_place_indexes = np.argpartition(
-                    votes, -(i + 1), axis=1
-                )[  # maybe argsort
-                    :, -(i + 1)
-                ].reshape(
-                    n, 1
-                )
-                i_place_indexes = np.hstack(
-                    (np.arange(n).reshape(n, 1), i_place_indexes)
-                )
-                i_place_positions = sorted_cands[
-                    i_place_indexes[:, 0], i_place_indexes[:, 1]
-                ]
-                candidate_options = np.append(candidate_options, i_place_positions)
-            prev_positions.append(candidate_options)
+            top_h_indices = np.argpartition(votes, -h, axis=1)[:, -h:].reshape(h * n, 1)
+            top_h_indices = np.hstack(
+                ((np.arange(n).repeat(h)).reshape(h * n, 1), top_h_indices)
+            )
+            top_h_positions = sorted_cands[top_h_indices[:, 0], top_h_indices[:, 1]]
+            prev_positions.append(top_h_positions)
 
         hist, bin_edges = np.histogram(winners, bins=bins)
         hists.append(hist)
@@ -170,13 +157,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     hists, edges = replicator(
-        k=7,
+        k=8,
         n=50_000,
         gens=500,
         perturb_stdev=0.001,
         uniform_eps=0,
         memory=1,
-        h=2,
+        h=3,
+        min=0.25,
+        max=0.75,
     )
 
     plt.imshow(
