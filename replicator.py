@@ -124,7 +124,7 @@ def replicator(
         # add an epsilon-fraction of uniform candidates
         if uniform_eps > 0:
             uniform_idxs = np.random.binomial(1, uniform_eps, (n, k)) == 1
-            elections[uniform_idxs] = np.random.rand(n, k)[uniform_idxs]
+            elections[uniform_idxs] = (np.random.rand(n, k) * (max - min) + min)[uniform_idxs]
 
         # mirror candidates if using symmetry
         if symmetry:
