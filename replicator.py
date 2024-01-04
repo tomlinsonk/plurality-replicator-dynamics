@@ -1,4 +1,9 @@
 import argparse
+from functools import partial
+import itertools
+from multiprocessing import Pool
+import os
+import pickle
 from matplotlib import pyplot as plt
 import numpy as np
 from scipy import stats
@@ -68,6 +73,7 @@ def replicator(
     min=0,
     max=1,
     n_bins=100,
+    rng=None
 ):
     """
     Run the replicator dynamics with k candidates per election, n elections per
@@ -101,6 +107,9 @@ def replicator(
     if initial_dsn is None:
         initial_dsn = stats.uniform(min, max)
 
+    if rng is None:
+        rng = np.random.default_rng()
+
     # maintain a queue of the top @h candidates in the last @memory generations
     prev_positions = deque(maxlen=memory)
     prev_positions.append(initial_dsn.rvs(n))
@@ -114,21 +123,21 @@ def replicator(
     for t in range(gens):
         # combine winner positions from all remembered generations
         sample_from = np.concatenate(prev_positions)
-        elections = np.random.choice(sample_from, (n, k))
+        elections = rng.choice(sample_from, (n, k))
 
         # add perturbation noise
         if perturb_stdev > 0:
-            elections += np.random.normal(0, perturb_stdev, (n, k))
+            elections += rng.normal(0, perturb_stdev, (n, k))
             elections = elections.clip(min, max)
 
         # add an epsilon-fraction of uniform candidates
         if uniform_eps > 0:
-            uniform_idxs = np.random.binomial(1, uniform_eps, (n, k)) == 1
-            elections[uniform_idxs] = (np.random.rand(n, k) * (max - min) + min)[uniform_idxs]
+            uniform_idxs = rng.binomial(1, uniform_eps, (n, k)) == 1
+            elections[uniform_idxs] = (rng.random((n, k)) * (max - min) + min)[uniform_idxs]
 
         # mirror candidates if using symmetry
         if symmetry:
-            flip_idx = np.random.randint(0, 2, (n, k)) == 1
+            flip_idx = rng.integers(0, 2, (n, k)) == 1
             elections[flip_idx] = (1 - elections)[flip_idx]
 
         # get winner positions
@@ -153,22 +162,76 @@ def replicator(
     return np.array(hists), bin_edges
 
 
+def replicator_helper(arg_setting, arg_names, n, gens):
+    """
+    Helper method for running replicator in parallel. Seeds the RNG according
+    to the argument settings for replicator (plus the trial ID).
+
+    @arg_setting a list of argument values for replicator (last item: trial ID)
+    @arg_names the names of the arguments for replicator, in the same order as ^
+    @n the number of elections per generation
+    @gens the number of generations
+
+    @return the tuple (arg_settings, hists, edges), with trial ID stripped from
+            arg_settings 
+    """
+
+    kwargs = {key: val for key, val in zip(arg_names, arg_setting[:-1])}
+    kwargs['n'] = n
+    kwargs['gens'] = gens
+    kwargs['rng'] = np.random.default_rng(abs(hash(arg_setting)))
+
+    return (arg_setting[:-1],) + replicator(**kwargs)
+
+
+
+def run_experiment(name, n, gens, trials, threads, arg_dict):
+    """
+    Run a replicator experiment in parallel. Saves to results/. Runs every
+    combination of argument values from arg_dict. Results are saved as per-
+    generation histograms (with counts summed over trials).
+
+    @name the name of the experiment (used for results file)
+    @n the number of elections per generation
+    @gens the number of generations to run
+    @trials the number of replicates to run per arg setting
+    @threads the number of threads to use
+    @arg_dict a dict whose keys are args to replicator() and whose values are
+              lists of argument settings.
+    """
+    assert 'k' in arg_dict, 'must specify k range in arg_dict'
+
+    arg_names = sorted(arg_dict.keys())
+    arg_lists = [list(arg_dict[p]) for p in arg_names]
+    helper = partial(replicator_helper, arg_names=arg_names, n=n, gens=gens)
+
+    settings = itertools.product(*(arg_lists + [list(range(trials))]))
+    total = trials * np.product([len(p) for p in arg_lists])
+    results = dict()
+
+    with Pool(threads) as pool:
+        for setting, hists, edges in tqdm(pool.imap_unordered(helper, settings),
+                                          total=total):
+            if setting not in results:
+                results[setting] = hists
+            else:
+                results[setting] += hists
+
+    os.makedirs('results/', exist_ok=True)
+    with open(f'results/{name}.pickle', 'wb') as f:
+        pickle.dump((results, n, gens, trials, arg_names, arg_lists, edges), f)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    hists, edges = replicator(
-        k=8,
-        n=50_000,
-        gens=500,
-        perturb_stdev=0.001,
-        uniform_eps=0,
-        memory=1,
-        h=3,
-        min=0.25,
-        max=0.75,
+    # small_k_no_noise()
+
+    run_experiment(
+        'small-k-eps-range-50-trials', n=100_000, gens=300, trials=50, threads=8,
+        arg_dict={
+            'k': range(2, 11),
+            'uniform_eps': [0, 0.001, 0.01, 0.1]
+        }               
     )
 
-    plt.imshow(
-        np.log(1 + hists.T), cmap="afmhot_r", aspect="auto", interpolation="nearest"
-    )
-    plt.show()
+
