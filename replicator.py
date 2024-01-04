@@ -223,7 +223,7 @@ def run_experiment(name, n, gens, trials, threads, arg_dict):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--threads', dtype=int)
+    parser.add_argument('--threads', type=int)
     args = parser.parse_args()
 
     # small_k_no_noise()
