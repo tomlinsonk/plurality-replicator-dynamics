@@ -184,7 +184,6 @@ def replicator_helper(arg_setting, arg_names, n, gens):
     return (arg_setting[:-1],) + replicator(**kwargs)
 
 
-
 def run_experiment(name, n, gens, trials, threads, arg_dict):
     """
     Run a replicator experiment in parallel. Saves to results/. Runs every
@@ -221,16 +220,24 @@ def run_experiment(name, n, gens, trials, threads, arg_dict):
     with open(f'results/{name}.pickle', 'wb') as f:
         pickle.dump((results, n, gens, trials, arg_names, arg_lists, edges), f)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--threads', type=int)
     args = parser.parse_args()
 
-    # small_k_no_noise()
+    # run_experiment(
+    #     'small-k-eps-range-50-trials',
+    #     n=100_000, gens=300, trials=50, threads=args.threads,
+    #     arg_dict={
+    #         'k': range(2, 11),
+    #         'uniform_eps': [0, 0.001, 0.01, 0.1]
+    #     }               
+    # )
 
     run_experiment(
-        'small-k-eps-range-50-trials',
-        n=100_000, gens=300, trials=50, threads=args.threads,
+        'small-k-eps-range-1-trial',
+        n=100_000, gens=300, trials=1, threads=args.threads,
         arg_dict={
             'k': range(2, 11),
             'uniform_eps': [0, 0.001, 0.01, 0.1]
