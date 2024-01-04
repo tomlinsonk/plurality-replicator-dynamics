@@ -226,32 +226,43 @@ if __name__ == "__main__":
     parser.add_argument('--threads', type=int)
     args = parser.parse_args()
 
-    # run_experiment(
-    #     'small-k-eps-range-50-trials',
-    #     n=100_000, gens=300, trials=50, threads=args.threads,
-    #     arg_dict={
-    #         'k': range(2, 11),
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1]
-    #     }               
-    # )
+    run_experiment(
+        'small-k-eps-range-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        arg_dict={
+            'k': range(2, 11),
+            'uniform_eps': [0, 0.001, 0.01, 0.1]
+        }               
+    )
 
-    # run_experiment(
-    #     'small-k-eps-range-1-trial',
-    #     n=100_000, gens=300, trials=1, threads=args.threads,
-    #     arg_dict={
-    #         'k': range(2, 11),
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1]
-    #     }               
-    # )
+    run_experiment(
+        'small-k-eps-range-1-trial',
+        n=100_000, gens=200, trials=1, threads=args.threads,
+        arg_dict={
+            'k': range(2, 11),
+            'uniform_eps': [0, 0.001, 0.01, 0.1]
+        }               
+    )
 
     run_experiment(
         'small-k-eps-range-symmetry-1-trial',
-        n=100_000, gens=300, trials=1, threads=args.threads,
+        n=100_000, gens=200, trials=1, threads=args.threads,
         arg_dict={
             'k': range(2, 11),
             'uniform_eps': [0, 0.001, 0.01, 0.1],
             'symmetry': [True]
         }               
     )
+
+    run_experiment(
+        'small-k-eps-range-symmetry-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        arg_dict={
+            'k': range(2, 11),
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True]
+        }               
+    )
+
 
 

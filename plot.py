@@ -23,7 +23,7 @@ def plot_small_k_no_noise(name, epsilon=0):
 
     for i, k in enumerate(ks):
         axes[i].imshow(np.log(1 + results[k, epsilon].T), cmap='afmhot_r', aspect='auto', interpolation='nearest')
-        axes[i].set_xticks([0, 100, 200, 300])
+        axes[i].set_xticks([0, 100, 200])
         axes[i].set_yticks([0, 49, 99])
         axes[i].set_yticklabels([1, 0.5, 0] if i == 0 else [])
         axes[i].set_xlabel('$t$')
@@ -41,9 +41,12 @@ if __name__ == '__main__':
 
 
     plot_small_k_no_noise('small-k-eps-range-50-trials', epsilon=0)
+    plot_small_k_no_noise('small-k-eps-range-50-trials', epsilon=0.01)
+    plot_small_k_no_noise('small-k-eps-range-1-trial', epsilon=0)
+    plot_small_k_no_noise('small-k-eps-range-1-trial', epsilon=0.01)
+
     # plot_small_k_no_noise('small-k-eps-range-1-trial', epsilon=0)
     # plot_small_k_no_noise('small-k-eps-range-1-trial', epsilon=0.001)
-    plot_small_k_no_noise('small-k-eps-range-1-trial', epsilon=0.01)
     # plot_small_k_no_noise('small-k-eps-range-1-trial', epsilon=0.1)
 
     # 
