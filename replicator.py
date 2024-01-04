@@ -223,11 +223,14 @@ def run_experiment(name, n, gens, trials, threads, arg_dict):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument('--threads', dtype=int)
+    args = parser.parse_args()
 
     # small_k_no_noise()
 
     run_experiment(
-        'small-k-eps-range-50-trials', n=100_000, gens=300, trials=50, threads=8,
+        'small-k-eps-range-50-trials',
+        n=100_000, gens=300, trials=50, threads=args.threads,
         arg_dict={
             'k': range(2, 11),
             'uniform_eps': [0, 0.001, 0.01, 0.1]
