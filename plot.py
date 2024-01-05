@@ -149,7 +149,7 @@ def plot_noisy_convergence():
     epsilons = (
         (0.1, 1/4, 1/3, 1/2),
         (0.1, 1/4, 1/3, 1/2),
-        (0.001, 0.001, 0.001, 0.001)
+        (0.001, 0.00001, 0.0001, 0.00001)
     )
 
 
@@ -165,7 +165,19 @@ def plot_noisy_convergence():
         'Theorem 9 (bound)'
     )
 
-    max_ts = (15, 30, 50)
+    text_pos = (
+        ((15.5, 0.00029), (15.5, 0.0085), (15.5, 0.04), (15.5, 0.22)),
+        ((30.5, 0.00004), (30.5, 0.0012), (30.5, 0.014), (30.5, 0.08)),
+        ((20, 0.00001), (40, 0.00001), (59, 0.000014), (60.5, 0.055))
+    )
+
+    rots = (
+        (0, 0, 0, 0),
+        (0, 0, 0, 0),
+        (-50, -65, -50, -3)
+    )
+
+    max_ts = (15, 30, 60)
 
     for i, k in enumerate(ks):
         for j, (x_idx, eps) in enumerate(zip(x_idxs[i], epsilons[i])):
@@ -175,12 +187,11 @@ def plot_noisy_convergence():
             pred = preds[i](x, eps)
             axes[i].axhline(pred, c=colors[i][j], label=labels[i] if j == 0 else '')
             axes[i].plot(np.arange(max_ts[i]+1), fracs[x_idx, :max_ts[i]+1], 'x', c=colors[i][j], label='simulation' if j == 0 else '')
-            if i == 0:
-                axes[i].text(max_ts[i], pred * 1.3, f'$x = {x:.2f}, \epsilon = {eps:.2f}$', c=colors[i][j], fontsize=8, ha='right')
+            axes[i].text(*text_pos[i][j], f'$x = {x:.2g}, \epsilon = {eps:.2g}$', c=colors[i][j], fontsize=8, ha='right', rotation=rots[i][j])
 
         axes[i].set_yscale('log')
         axes[i].set_xlabel('t')
-        axes[i].legend(fontsize=9, bbox_to_anchor=(0.36, 0.4))
+        axes[i].legend(fontsize=9, bbox_to_anchor=(0.65, 0.3) if k == 4 else (0.36, 0.4))
         axes[i].set_title(f'$k={k}$')
 
     axes[0].set_ylabel('$F_{{k, t}}(x)$')
