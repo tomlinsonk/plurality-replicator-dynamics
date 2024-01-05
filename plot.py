@@ -97,7 +97,6 @@ def plot_cdf_bounds():
 
     fig, axes = plt.subplots(1, 3, figsize=(12, 2.6))
 
-
     for i, k in enumerate(ks):
 
         for j, idx in enumerate(idxs[i]):
@@ -123,12 +122,76 @@ def plot_cdf_bounds():
     plt.close()
 
 
+def plot_noisy_convergence():
+    with open('results/k-2-3-4-many-epsilon-symmetry-50-trials.pickle', 'rb') as f:
+        results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
+    
+    fig, axes = plt.subplots(1, 3, figsize=(12, 2.6))
 
+    ks = (2, 3, 4)
+
+    xs = edges[1:]
+
+    k2_pred = lambda x, eps: (1 - 4 * x * eps * (1 - eps) - (1 - 8 * eps * x * (1 - eps)) ** 0.5) / (4 * (1 - eps) ** 2)
+    k4_pred = lambda x, eps: eps / (8 * (1/2 - eps * (x / 3 + 1/3) - (1 - eps) * (x/3 + 1/3)) ** 3)
+    preds = (
+        k2_pred,
+        lambda x, eps: 1.5 * eps,
+        k4_pred
+    )
+
+    x_idxs = (
+        (9, 19, 29, 39),
+        (9, 19, 29, 39),
+        (35, 38, 41, 44)
+    )
+
+    epsilons = (
+        (0.1, 1/4, 1/3, 1/2),
+        (0.1, 1/4, 1/3, 1/2),
+        (0.001, 0.001, 0.001, 0.001)
+    )
+
+
+    colors = (
+        ('#75888a', '#8e50aa', '#99c15f', '#b45948'),
+        ('#75888a', '#8e50aa', '#99c15f', '#b45948'),
+        ('#75888a', '#8e50aa', '#99c15f', '#b45948')
+    )
+
+    labels = (
+        'Theorem 7 (exact)',
+        'Theorem 8 (bound)',
+        'Theorem 9 (bound)'
+    )
+
+    max_ts = (15, 30, 50)
+
+    for i, k in enumerate(ks):
+        for j, (x_idx, eps) in enumerate(zip(x_idxs[i], epsilons[i])):
+            x = xs[x_idx]
+            print(x)
+            fracs = np.cumsum(results[k, True, eps].T, axis=0) / (trials * n)
+            pred = preds[i](x, eps)
+            axes[i].axhline(pred, c=colors[i][j], label=labels[i] if j == 0 else '')
+            axes[i].plot(np.arange(max_ts[i]+1), fracs[x_idx, :max_ts[i]+1], 'x', c=colors[i][j], label='simulation' if j == 0 else '')
+            if i == 0:
+                axes[i].text(max_ts[i], pred * 1.3, f'$x = {x:.2f}, \epsilon = {eps:.2f}$', c=colors[i][j], fontsize=8, ha='right')
+
+        axes[i].set_yscale('log')
+        axes[i].set_xlabel('t')
+        axes[i].legend(fontsize=9, bbox_to_anchor=(0.36, 0.4))
+        axes[i].set_title(f'$k={k}$')
+
+    axes[0].set_ylabel('$F_{{k, t}}(x)$')
+    plt.show()
 
 if __name__ == '__main__':
     os.makedirs('plots/', exist_ok=True)
 
-    plot_cdf_bounds()
+    plot_noisy_convergence()
+
+    # plot_cdf_bounds()
 
 
     # plot_small_k_no_noise('small-k-eps-range-50-trials', epsilon=0)

@@ -269,7 +269,7 @@ if __name__ == "__main__":
         n=100_000, gens=200, trials=50, threads=args.threads,
         arg_dict={
             'k': range(2, 5),
-            'uniform_eps': [0, 0.001, 0.01, 0.1, 0.2, 1/4, 0.3, 1/3, 0.4, 0.5],
+            'uniform_eps': [0, 0.00001, 0.0001, 0.001, 0.01, 1/10, 1/4, 1/3, 1/2],
             'symmetry': [True]
         }               
     )
