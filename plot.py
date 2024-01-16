@@ -13,11 +13,9 @@ matplotlib.rcParams['ps.fonttype'] = 42
 signal.signal(signal.SIGINT, signal.SIG_DFL) 
 
 
-def plot_small_k_no_noise(name, epsilon=0, symmetry=False):
+def plot_heatmaps(name, ks, epsilon=0, symmetry=False):
     with open(f'results/{name}.pickle', 'rb') as f:
         results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
-
-    ks = [2, 3, 4, 5, 6, 7]
 
     fig, axes = plt.subplots(1, len(ks), figsize=(15, 2))
 
@@ -202,16 +200,18 @@ if __name__ == '__main__':
 
     # plot_noisy_convergence()
 
-    plot_cdf_bounds()
+    # plot_cdf_bounds()
 
+    # plot_heatmaps('small-k-eps-range-50-trials', range(2, 8), epsilon=0)
 
-    # plot_small_k_no_noise('small-k-eps-range-50-trials', epsilon=0)
+    # plot_heatmaps('small-k-eps-range-50-trials', range(2, 8), epsilon=0.01)
+    # plot_heatmaps('small-k-eps-range-1-trial', range(2, 8), epsilon=0)
+    # plot_heatmaps('small-k-eps-range-1-trial', range(2, 8), epsilon=0.01)
 
-    # plot_small_k_no_noise('small-k-eps-range-50-trials', epsilon=0.01)
-    # plot_small_k_no_noise('small-k-eps-range-1-trial', epsilon=0)
-    # plot_small_k_no_noise('small-k-eps-range-1-trial', epsilon=0.01)
+    # plot_heatmaps('small-k-eps-range-symmetry-50-trials', range(2, 8), epsilon=0, symmetry=True)
+    # plot_heatmaps('small-k-eps-range-symmetry-50-trials', range(2, 8), epsilon=0.01, symmetry=True)
+    # plot_heatmaps('small-k-eps-range-symmetry-1-trial', range(2, 8), epsilon=0, symmetry=True)
+    # plot_heatmaps('small-k-eps-range-symmetry-1-trial', range(2, 8), epsilon=0.01, symmetry=True)
 
-    # plot_small_k_no_noise('small-k-eps-range-symmetry-50-trials', epsilon=0, symmetry=True)
-    # plot_small_k_no_noise('small-k-eps-range-symmetry-50-trials', epsilon=0.01, symmetry=True)
-    # plot_small_k_no_noise('small-k-eps-range-symmetry-1-trial', epsilon=0, symmetry=True)
-    # plot_small_k_no_noise('small-k-eps-range-symmetry-1-trial', epsilon=0.01, symmetry=True)
+    plot_heatmaps('large-k-eps-range-symmetry-50-trials', [8, 9, 10, 15, 25, 50], epsilon=0, symmetry=True)
+    plot_heatmaps('large-k-eps-range-symmetry-50-trials', [8, 9, 10, 15, 25, 50], epsilon=0.01, symmetry=True)
