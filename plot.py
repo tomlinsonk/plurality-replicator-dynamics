@@ -42,7 +42,7 @@ def plot_cdf_bounds():
     ks = (2, 3, 4)
 
     idxs = (
-        (9, 21, 32, 43),
+        (9, 39, 46),
         (9, 39, 46),
         (9, 39, 46) 
     )
@@ -62,20 +62,20 @@ def plot_cdf_bounds():
     )
 
     colors = (
-        ['#75888a', '#8e50aa', '#99c15f', '#b45948'],
+        ['#8e50aa', '#99c15f', '#b45948'],
         ['#8e50aa', '#99c15f', '#b45948'],
         ['#8e50aa', '#99c15f', '#b45948']
     )
 
 
     label_pos = (
-        ((0.11, 0.105), (0.12, 0.225), (0.105, 0.34), (0.05, 0.455)),
+        ((0.11, 0.11), (0, 0.37), (0.05, 0.44)),
         ((0.4, 0.1), (0.5, 0.396), (0.6, 0.474)),
         ((1.1, 0.11), (1.1, 0.375), (1.1, 0.428))
     )
 
     rotations = (
-        (-42, -53, -50, -28),
+        (-42, -49, -20),
         (-28, -45, -19),
         (-3, -1, -1)
     )
@@ -86,7 +86,7 @@ def plot_cdf_bounds():
         'Theorem 4 (bound)'
     )
 
-    max_ts = (6, 20, 40)
+    max_ts = (7, 20, 40)
 
     fig, axes = plt.subplots(1, 3, figsize=(12, 2.6))
 
@@ -200,9 +200,9 @@ def format_eps(eps):
 if __name__ == '__main__':
     os.makedirs('plots/', exist_ok=True)
 
-    plot_noisy_convergence()
+    # plot_noisy_convergence()
 
-    # plot_cdf_bounds()
+    plot_cdf_bounds()
 
 
     # plot_small_k_no_noise('small-k-eps-range-50-trials', epsilon=0)
