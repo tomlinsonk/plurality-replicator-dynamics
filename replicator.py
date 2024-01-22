@@ -181,12 +181,13 @@ def replicator_helper(arg_setting, arg_names, n, gens, static_args):
     kwargs['n'] = n
     kwargs['gens'] = gens
     kwargs['rng'] = np.random.default_rng(abs(hash(arg_setting)))
-    kwargs.update(static_args)
+    if static_args is not None:
+        kwargs.update(static_args)
 
     return (arg_setting[:-1],) + replicator(**kwargs)
 
 
-def run_experiment(name, n, gens, trials, threads, variable_args, static_args):
+def run_experiment(name, n, gens, trials, threads, variable_args, static_args=None):
     """
     Run a replicator experiment in parallel. Saves to results/. Runs every
     combination of argument values from variable_args, plus uses static_args.
@@ -233,20 +234,20 @@ if __name__ == "__main__":
     parser.add_argument('--threads', type=int)
     args = parser.parse_args()
 
-    run_experiment(
-        'bounded-support-eps-range-symmetry-50-trials',
-        n=100_000, gens=200, trials=50, threads=args.threads,
-        variable_args={
-            'k': range(2, 11),
-            'uniform_eps': [0, 0.001, 0.01, 0.1],
-            'symmetry': [True, False],
-        },
-        static_args={
-            'min': 1/4,
-            'max': 3/4,
-            'initial_dsn': stats.uniform(1/4, 1/2)
-        } 
-    )
+    # run_experiment(
+    #     'bounded-support-eps-range-symmetry-50-trials',
+    #     n=100_000, gens=200, trials=50, threads=args.threads,
+    #     variable_args={
+    #         'k': range(2, 11),
+    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
+    #         'symmetry': [True, False],
+    #     },
+    #     static_args={
+    #         'min': 1/4,
+    #         'max': 3/4,
+    #         'initial_dsn': stats.uniform(1/4, 1/2)
+    #     } 
+    # )
 
     run_experiment(
         'eps-range-1-trial',
