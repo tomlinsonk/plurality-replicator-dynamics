@@ -206,13 +206,24 @@ def format_eps(eps):
         return f'10^{{{np.log10(eps):.0f}}}'
     else:
         return f'{eps:.2g}'
+    
+
+def plot_bounded_support():
+    with open('results/bounded-support-eps-range-symmetry-50-trials.pickle', 'rb') as f:
+        results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
+
+    print(results.keys())
+    print(arg_lists)
+
 
 if __name__ == '__main__':
     os.makedirs('plots/', exist_ok=True)
 
+    plot_bounded_support()
+
     # plot_noisy_convergence()
 
-    plot_cdf_bounds()
+    # plot_cdf_bounds()
 
     # plot_heatmaps('small-k-eps-range-50-trials', range(2, 8), epsilon=0)
 

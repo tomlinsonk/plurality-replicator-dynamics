@@ -184,25 +184,30 @@ def replicator_helper(arg_setting, arg_names, n, gens):
     return (arg_setting[:-1],) + replicator(**kwargs)
 
 
-def run_experiment(name, n, gens, trials, threads, arg_dict):
+def run_experiment(name, n, gens, trials, threads, variable_args, static_args):
     """
     Run a replicator experiment in parallel. Saves to results/. Runs every
-    combination of argument values from arg_dict. Results are saved as per-
-    generation histograms (with counts summed over trials).
+    combination of argument values from variable_args, plus uses static_args.
+    Results are saved as per-generation histograms (with counts summed over trials)
+    for each combination of variable_args.
 
     @name the name of the experiment (used for results file)
     @n the number of elections per generation
     @gens the number of generations to run
     @trials the number of replicates to run per arg setting
     @threads the number of threads to use
-    @arg_dict a dict whose keys are args to replicator() and whose values are
-              lists of argument settings.
+    @variable_args a dict whose keys are args to replicator() and whose values are
+              lists of argument settings
+    @static_args a dict whose keys are args to replicator() and whose values are
+              single argument settings
     """
-    assert 'k' in arg_dict, 'must specify k range in arg_dict'
+    assert 'k' in variable_args, 'must specify k range in variable_args'
 
-    arg_names = sorted(arg_dict.keys())
-    arg_lists = [list(arg_dict[p]) for p in arg_names]
-    helper = partial(replicator_helper, arg_names=arg_names, n=n, gens=gens)
+    print('Running', name)
+
+    arg_names = sorted(variable_args.keys())
+    arg_lists = [list(variable_args[p]) for p in arg_names]
+    helper = partial(replicator_helper, arg_names=arg_names, n=n, gens=gens, **static_args)
 
     settings = itertools.product(*(arg_lists + [list(range(trials))]))
     total = trials * np.product([len(p) for p in arg_lists])
@@ -226,76 +231,51 @@ if __name__ == "__main__":
     parser.add_argument('--threads', type=int)
     args = parser.parse_args()
 
-    # run_experiment(
-    #     'small-k-eps-range-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     arg_dict={
-    #         'k': range(2, 11),
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1]
-    #     }               
-    # )
-
-    # run_experiment(
-    #     'small-k-eps-range-1-trial',
-    #     n=100_000, gens=200, trials=1, threads=args.threads,
-    #     arg_dict={
-    #         'k': range(2, 11),
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1]
-    #     }               
-    # )
-
-    # run_experiment(
-    #     'small-k-eps-range-symmetry-1-trial',
-    #     n=100_000, gens=200, trials=1, threads=args.threads,
-    #     arg_dict={
-    #         'k': range(2, 11),
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True]
-    #     }               
-    # )
-
-    # run_experiment(
-    #     'small-k-eps-range-symmetry-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     arg_dict={
-    #         'k': range(2, 11),
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True]
-    #     }               
-    # )
-
-    # run_experiment(
-    #     'k-2-3-4-many-epsilon-symmetry-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     arg_dict={
-    #         'k': range(2, 5),
-    #         'uniform_eps': [0, 0.00001, 0.0001, 0.001, 0.01, 1/10, 1/4, 1/3, 1/2],
-    #         'symmetry': [True]
-    #     }               
-    # )
-
-
-    # run_experiment(
-    #     'large-k-eps-range-symmetry-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     arg_dict={
-    #         'k': [8, 9, 10, 15, 25, 50],
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True]
-    #     }               
-    # )
-
     run_experiment(
         'bounded-support-eps-range-symmetry-50-trials',
         n=100_000, gens=200, trials=50, threads=args.threads,
-        arg_dict={
+        variable_args={
             'k': range(2, 11),
             'uniform_eps': [0, 0.001, 0.01, 0.1],
             'symmetry': [True, False],
-            'min': [1/4],
-            'max': [3/4],
-            'initial_dsn': [stats.uniform(1/4, 1/2)]
+        },
+        static_args={
+            'min': 1/4,
+            'max': 3/4,
+            'initial_dsn': stats.uniform(1/4, 1/2)
+        } 
+    )
+
+    run_experiment(
+        'eps-range-1-trial',
+        n=100_000, gens=200, trials=1, threads=args.threads,
+        variable_args={
+            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True, False]
         }               
+    )
+
+    run_experiment(
+        'eps-range-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True, False]
+        }               
+    )
+
+    run_experiment(
+        'k-2-3-4-many-epsilon-symmetry-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': range(2, 5),
+            'uniform_eps': [0, 0.00001, 0.0001, 0.001, 0.01, 1/10, 1/4, 1/3, 1/2]
+        },
+        static_args={
+            'symmetry': True
+        }            
     )
 
 
