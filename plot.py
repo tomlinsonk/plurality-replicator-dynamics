@@ -79,9 +79,9 @@ def plot_cdf_bounds():
     )
 
     labels = (
-        'Theorem 2 (exact)',
-        'Theorem 3 (bound)',
-        'Theorem 4 (bound)'
+        'Thm 2 (exact)',
+        'Thm 3 (bound)',
+        'Thm 4 (bound)'
     )
 
     max_ts = (7, 20, 40)
@@ -132,15 +132,15 @@ def plot_noisy_convergence():
     )
 
     x_idxs = (
-        (9, 19, 29, 39),
-        (9, 19, 29, 39),
-        (33, 39, 41, 44)
+        (9, 19, 19, 39),
+        (9, 19, 19, 39),
+        (33, 37, 37, 44)
     )
 
     epsilons = (
-        (0.1, 1/4, 1/3, 1/2),
-        (0.1, 1/4, 1/3, 1/2),
-        (0.001, 0.00001, 0.0001, 0.00001)
+        (0.1, 0.1, 1/3, 1/3),
+        (0.1, 0.1, 1/3, 1/3),
+        (0.001, 0.001, 0.00001, 0.00001)
     )
 
 
@@ -151,21 +151,33 @@ def plot_noisy_convergence():
     )
 
     labels = (
-        'Theorem 7 (exact)',
-        'Theorem 8 (bound)',
-        'Theorem 9 (bound)'
+        'Thm 7 (exact)',
+        'Thm 8 (bound)',
+        'Thm 9 (bound)'
     )
 
     text_pos = (
-        ((15.5, 0.00029), (15.5, 0.0085), (15.5, 0.04), (15.5, 0.22)),
-        ((30.5, 0.00004), (30.5, 0.0012), (30.5, 0.014), (30.5, 0.08)),
-        ((22, 0.00002), (44, 0.00002), (59, 0.000014), (60.5, 0.055))
+        ((15.5, 0.00029), (15.5, 0.0012), (15.5, 0.006), (15.5, 0.036)),
+        ((30.5, 0.000035), (30.5, 0.0001), (30.5, 0.012), (30.5, 0.043)),
+        ((23, 0.000009), (59, 0.00002), (60.5, 0.007), (60.5, 0.053))
     )
 
     rots = (
         (0, 0, 0, 0),
         (0, 0, 0, 0),
-        (-60, -55, -50, -5)
+        (-60, -8, 0, -5)
+    )
+
+    ls = (
+        ('-', '-', '-', '-'),
+        ('-', (0, (5, 5)), '-', (0, (5, 5))),
+        ('-', '-', '-', '-')
+    )
+
+    legend_pos = (
+        (0.46, 0.87),
+        (0.46, 0.42),
+        (0, 0.12)
     )
 
     max_ts = (15, 30, 60)
@@ -175,13 +187,13 @@ def plot_noisy_convergence():
             x = xs[x_idx]
             fracs = np.cumsum(results[k, True, eps].T, axis=0) / (trials * n)
             pred = preds[i](x, eps)
-            axes[i].axhline(pred, c=colors[i][j], label=labels[i] if j == 0 else '')
+            axes[i].axhline(pred, c=colors[i][j], label=labels[i] if j == 0 else '', ls=ls[i][j])
             axes[i].plot(np.arange(max_ts[i]+1), fracs[x_idx, :max_ts[i]+1], '.', c=colors[i][j], label='simulation' if j == 0 else '')
             axes[i].text(*text_pos[i][j], f'$x = {x:.2g}, \epsilon = {format_eps(eps)}$', c=colors[i][j], fontsize=8, ha='right', rotation=rots[i][j])
 
         axes[i].set_yscale('log')
         axes[i].set_xlabel('t')
-        axes[i].legend(fontsize=9, bbox_to_anchor=(0.005, 0.12) if k == 4 else (0.36, 0.27), loc='center left')
+        axes[i].legend(fontsize=9, bbox_to_anchor=legend_pos[i], loc='center left')
         axes[i].set_title(f'$k={k}$')
 
     axes[0].set_ylabel('$F_{{k, t}}(x)$')
@@ -200,7 +212,7 @@ if __name__ == '__main__':
 
     # plot_noisy_convergence()
 
-    # plot_cdf_bounds()
+    plot_cdf_bounds()
 
     # plot_heatmaps('small-k-eps-range-50-trials', range(2, 8), epsilon=0)
 
@@ -213,5 +225,5 @@ if __name__ == '__main__':
     # plot_heatmaps('small-k-eps-range-symmetry-1-trial', range(2, 8), epsilon=0, symmetry=True)
     # plot_heatmaps('small-k-eps-range-symmetry-1-trial', range(2, 8), epsilon=0.01, symmetry=True)
 
-    plot_heatmaps('large-k-eps-range-symmetry-50-trials', [8, 9, 10, 15, 25, 50], epsilon=0, symmetry=True)
-    plot_heatmaps('large-k-eps-range-symmetry-50-trials', [8, 9, 10, 15, 25, 50], epsilon=0.01, symmetry=True)
+    # plot_heatmaps('large-k-eps-range-symmetry-50-trials', [8, 9, 10, 15, 25, 50], epsilon=0, symmetry=True)
+    # plot_heatmaps('large-k-eps-range-symmetry-50-trials', [8, 9, 10, 15, 25, 50], epsilon=0.01, symmetry=True)
