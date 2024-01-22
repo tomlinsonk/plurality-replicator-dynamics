@@ -13,14 +13,14 @@ matplotlib.rcParams['ps.fonttype'] = 42
 signal.signal(signal.SIGINT, signal.SIG_DFL) 
 
 
-def plot_heatmaps(name, ks, epsilon=0, symmetry=False):
-    with open(f'results/{name}.pickle', 'rb') as f:
+def plot_heatmaps(pickle_name, plot_name, ks, epsilon, symmetry):
+    with open(f'results/{pickle_name}.pickle', 'rb') as f:
         results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
 
     fig, axes = plt.subplots(1, len(ks), figsize=(15, 2))
 
     for i, k in enumerate(ks):
-        hists = results[k, True, epsilon] if symmetry else results[k, epsilon]
+        hists = results[k, symmetry, epsilon]
         axes[i].imshow(np.log(1 + hists.T), cmap='afmhot_r', aspect='auto', interpolation='nearest')
         axes[i].set_xticks([0, 100, 200])
         axes[i].set_yticks([0, 49, 99])
@@ -29,12 +29,12 @@ def plot_heatmaps(name, ks, epsilon=0, symmetry=False):
 
         axes[i].set_title(f'$k = {k}$')
 
-    plt.savefig(f'plots/{name}-eps-{epsilon}.pdf', bbox_inches='tight', dpi=500)
+    plt.savefig(f'plots/{plot_name}.pdf', bbox_inches='tight', dpi=500)
     plt.close()
 
 
 def plot_cdf_bounds():
-    with open('results/small-k-eps-range-symmetry-50-trials.pickle', 'rb') as f:
+    with open('results/eps-range-50-trials.pickle', 'rb') as f:
         results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
 
     ks = (2, 3, 4)
@@ -185,7 +185,7 @@ def plot_noisy_convergence():
     for i, k in enumerate(ks):
         for j, (x_idx, eps) in enumerate(zip(x_idxs[i], epsilons[i])):
             x = xs[x_idx]
-            fracs = np.cumsum(results[k, True, eps].T, axis=0) / (trials * n)
+            fracs = np.cumsum(results[k, eps].T, axis=0) / (trials * n)
             pred = preds[i](x, eps)
             axes[i].axhline(pred, c=colors[i][j], label=labels[i] if j == 0 else '', ls=ls[i][j])
             axes[i].plot(np.arange(max_ts[i]+1), fracs[x_idx, :max_ts[i]+1], '.', c=colors[i][j], label='simulation' if j == 0 else '')
@@ -206,35 +206,32 @@ def format_eps(eps):
         return f'10^{{{np.log10(eps):.0f}}}'
     else:
         return f'{eps:.2g}'
-    
 
-def plot_bounded_support():
-    with open('results/bounded-support-eps-range-symmetry-50-trials.pickle', 'rb') as f:
-        results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
-
-    print(results.keys())
-    print(arg_lists)
 
 
 if __name__ == '__main__':
     os.makedirs('plots/', exist_ok=True)
 
-    plot_bounded_support()
+    # plot_heatmaps('bounded-support-eps-range-symmetry-50-trials', 'bounded-support-50-trials-eps-0', range(2, 8), epsilon=0, symmetry=False)
+    # plot_heatmaps('bounded-support-eps-range-symmetry-50-trials', 'bounded-support-50-trials-eps-0-symmetry', range(2, 8), epsilon=0, symmetry=True)
+    # plot_heatmaps('bounded-support-eps-range-symmetry-50-trials', 'bounded-support-50-trials-eps-0.01', range(2, 8), epsilon=0.01, symmetry=False)
+    # plot_heatmaps('bounded-support-eps-range-symmetry-50-trials', 'bounded-support-50-trials-eps-0.01-symmetry', range(2, 8), epsilon=0.01, symmetry=True)
+
+
+
+
+    # plot_heatmaps('eps-range-1-trial', 'small-k-1-trial-eps-0', range(2, 8), epsilon=0, symmetry=False)
+    # plot_heatmaps('eps-range-1-trial', 'small-k-1-trial-eps-0.01', range(2, 8), epsilon=0.01, symmetry=False)
+    # plot_heatmaps('eps-range-1-trial', 'small-k-1-trial-eps-0-symmetry', range(2, 8), epsilon=0, symmetry=True)
+    # plot_heatmaps('eps-range-1-trial', 'small-k-1-trial-eps-0.01-symmetry', range(2, 8), epsilon=0.01, symmetry=True)
+
 
     # plot_noisy_convergence()
-
     # plot_cdf_bounds()
 
-    # plot_heatmaps('small-k-eps-range-50-trials', range(2, 8), epsilon=0)
-
-    # plot_heatmaps('small-k-eps-range-50-trials', range(2, 8), epsilon=0.01)
-    # plot_heatmaps('small-k-eps-range-1-trial', range(2, 8), epsilon=0)
-    # plot_heatmaps('small-k-eps-range-1-trial', range(2, 8), epsilon=0.01)
-
-    # plot_heatmaps('small-k-eps-range-symmetry-50-trials', range(2, 8), epsilon=0, symmetry=True)
-    # plot_heatmaps('small-k-eps-range-symmetry-50-trials', range(2, 8), epsilon=0.01, symmetry=True)
-    # plot_heatmaps('small-k-eps-range-symmetry-1-trial', range(2, 8), epsilon=0, symmetry=True)
-    # plot_heatmaps('small-k-eps-range-symmetry-1-trial', range(2, 8), epsilon=0.01, symmetry=True)
-
-    # plot_heatmaps('large-k-eps-range-symmetry-50-trials', [8, 9, 10, 15, 25, 50], epsilon=0, symmetry=True)
-    # plot_heatmaps('large-k-eps-range-symmetry-50-trials', [8, 9, 10, 15, 25, 50], epsilon=0.01, symmetry=True)
+    plot_heatmaps('eps-range-50-trials', 'small-k-50-trials-eps-0', range(2, 8), epsilon=0, symmetry=False)
+    plot_heatmaps('eps-range-50-trials', 'small-k-50-trials-eps-0.01', range(2, 8), epsilon=0.01, symmetry=False)
+    plot_heatmaps('eps-range-50-trials', 'small-k-50-trials-eps-0-symmetry', range(2, 8), epsilon=0, symmetry=True)
+    plot_heatmaps('eps-range-50-trials', 'small-k-50-trials-eps-0.01-symmetry', range(2, 8), epsilon=0.01, symmetry=True)
+    plot_heatmaps('eps-range-50-trials', 'large-k-50-trials-eps-0-symmetry', [8, 9, 10, 15, 25, 40], epsilon=0, symmetry=True)
+    plot_heatmaps('eps-range-50-trials', 'large-k-50-trials-eps-0.01-symmetry', [8, 9, 10, 15, 25, 40], epsilon=0.01, symmetry=True)

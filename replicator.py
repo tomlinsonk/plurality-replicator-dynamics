@@ -253,7 +253,7 @@ if __name__ == "__main__":
         'eps-range-1-trial',
         n=100_000, gens=200, trials=1, threads=args.threads,
         variable_args={
-            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 40],
             'uniform_eps': [0, 0.001, 0.01, 0.1],
             'symmetry': [True, False]
         }               
@@ -263,23 +263,23 @@ if __name__ == "__main__":
         'eps-range-50-trials',
         n=100_000, gens=200, trials=50, threads=args.threads,
         variable_args={
-            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 40],
             'uniform_eps': [0, 0.001, 0.01, 0.1],
             'symmetry': [True, False]
         }               
     )
 
-    run_experiment(
-        'k-2-3-4-many-epsilon-symmetry-50-trials',
-        n=100_000, gens=200, trials=50, threads=args.threads,
-        variable_args={
-            'k': range(2, 5),
-            'uniform_eps': [0, 0.00001, 0.0001, 0.001, 0.01, 1/10, 1/4, 1/3, 1/2]
-        },
-        static_args={
-            'symmetry': True
-        }            
-    )
+    # run_experiment(
+    #     'k-2-3-4-many-epsilon-symmetry-50-trials',
+    #     n=100_000, gens=200, trials=50, threads=args.threads,
+    #     variable_args={
+    #         'k': range(2, 5),
+    #         'uniform_eps': [0, 0.00001, 0.0001, 0.001, 0.01, 1/10, 1/4, 1/3, 1/2]
+    #     },
+    #     static_args={
+    #         'symmetry': True
+    #     }            
+    # )
 
 
 
