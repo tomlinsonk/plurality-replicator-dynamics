@@ -233,5 +233,12 @@ if __name__ == '__main__':
     plot_heatmaps('eps-range-50-trials', 'small-k-50-trials-eps-0.01', range(2, 8), epsilon=0.01, symmetry=False)
     plot_heatmaps('eps-range-50-trials', 'small-k-50-trials-eps-0-symmetry', range(2, 8), epsilon=0, symmetry=True)
     plot_heatmaps('eps-range-50-trials', 'small-k-50-trials-eps-0.01-symmetry', range(2, 8), epsilon=0.01, symmetry=True)
+    
     plot_heatmaps('eps-range-50-trials', 'large-k-50-trials-eps-0-symmetry', [8, 9, 10, 15, 25, 40], epsilon=0, symmetry=True)
     plot_heatmaps('eps-range-50-trials', 'large-k-50-trials-eps-0.01-symmetry', [8, 9, 10, 15, 25, 40], epsilon=0.01, symmetry=True)
+    plot_heatmaps('eps-range-50-trials', 'large-k-50-trials-eps-0', [8, 9, 10, 15, 25, 40], epsilon=0, symmetry=False)
+    plot_heatmaps('eps-range-50-trials', 'large-k-50-trials-eps-0.01', [8, 9, 10, 15, 25, 40], epsilon=0.01, symmetry=False)
+    plot_heatmaps('eps-range-1-trial', 'large-k-1-trial-eps-0', [8, 9, 10, 15, 25, 40], epsilon=0, symmetry=False)
+    plot_heatmaps('eps-range-1-trial', 'large-k-1-trial-eps-0.01', [8, 9, 10, 15, 25, 40], epsilon=0.01, symmetry=False)
+    plot_heatmaps('eps-range-1-trial', 'large-k-1-trial-eps-0-symmetry', [8, 9, 10, 15, 25, 40], epsilon=0, symmetry=True)
+    plot_heatmaps('eps-range-1-trial', 'large-k-1-trial-eps-0.01-symmetry', [8, 9, 10, 15, 25, 40], epsilon=0.01, symmetry=True)
