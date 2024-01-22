@@ -162,7 +162,7 @@ def replicator(
     return np.array(hists), bin_edges
 
 
-def replicator_helper(arg_setting, arg_names, n, gens):
+def replicator_helper(arg_setting, arg_names, n, gens, static_args):
     """
     Helper method for running replicator in parallel. Seeds the RNG according
     to the argument settings for replicator (plus the trial ID).
@@ -171,6 +171,7 @@ def replicator_helper(arg_setting, arg_names, n, gens):
     @arg_names the names of the arguments for replicator, in the same order as ^
     @n the number of elections per generation
     @gens the number of generations
+    @static_args additional fixed argumnets for replicator
 
     @return the tuple (arg_settings, hists, edges), with trial ID stripped from
             arg_settings 
@@ -180,6 +181,7 @@ def replicator_helper(arg_setting, arg_names, n, gens):
     kwargs['n'] = n
     kwargs['gens'] = gens
     kwargs['rng'] = np.random.default_rng(abs(hash(arg_setting)))
+    kwargs.update(static_args)
 
     return (arg_setting[:-1],) + replicator(**kwargs)
 
@@ -207,7 +209,7 @@ def run_experiment(name, n, gens, trials, threads, variable_args, static_args):
 
     arg_names = sorted(variable_args.keys())
     arg_lists = [list(variable_args[p]) for p in arg_names]
-    helper = partial(replicator_helper, arg_names=arg_names, n=n, gens=gens, **static_args)
+    helper = partial(replicator_helper, arg_names=arg_names, n=n, gens=gens, static_args=static_args)
 
     settings = itertools.product(*(arg_lists + [list(range(trials))]))
     total = trials * np.product([len(p) for p in arg_lists])
