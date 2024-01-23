@@ -15,6 +15,7 @@ def plurality_votes(cand_pos, voter_dsn=None):
     """
     Compute the vote shares of candidates in a collection of elections,
     optionally with the given voter distribution (default: uniform voters).
+    Adds tiny jitter (~1e-10) to vote shares to enable random tie-breaking
 
     @cand_pos an (n, k) numpy array (n = #elections, k = #candidates) of
               candidate positions
@@ -29,7 +30,7 @@ def plurality_votes(cand_pos, voter_dsn=None):
     cdfs = regions if voter_dsn is None else voter_dsn.cdf(regions)
     votes = np.diff(cdfs, prepend=0, append=1)
 
-    return sorted_cands, votes
+    return sorted_cands, votes + np.random.random(votes.shape) * 1e-10  # break ties at random
 
 
 def plurality(cand_pos, voter_dsn=None):
@@ -233,56 +234,56 @@ if __name__ == "__main__":
     parser.add_argument('--threads', type=int)
     args = parser.parse_args()
 
-    # hists, edges = replicator([2, 3, 4, 5, 6, 7], 50_000, 200, symmetry=True, uniform_eps=0.01)
+    # hists, edges = replicator(50, 50_000, 200, symmetry=True)
     # plt.imshow(np.log(1 + hists.T), cmap='afmhot_r', aspect='auto', interpolation='nearest')
     # plt.show()
 
-    # run_experiment(
-    #     'bounded-support-eps-range-symmetry-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     variable_args={
-    #         'k': range(2, 11),
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True, False],
-    #     },
-    #     static_args={
-    #         'min': 1/4,
-    #         'max': 3/4,
-    #         'initial_dsn': stats.uniform(1/4, 1/2)
-    #     } 
-    # )
+    run_experiment(
+        'bounded-support-eps-range-symmetry-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': range(2, 11),
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True, False],
+        },
+        static_args={
+            'min': 1/4,
+            'max': 3/4,
+            'initial_dsn': stats.uniform(1/4, 1/2)
+        } 
+    )
 
-    # run_experiment(
-    #     'eps-range-1-trial',
-    #     n=100_000, gens=200, trials=1, threads=args.threads,
-    #     variable_args={
-    #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 40],
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True, False]
-    #     }               
-    # )
+    run_experiment(
+        'eps-range-1-trial',
+        n=100_000, gens=200, trials=1, threads=args.threads,
+        variable_args={
+            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True, False]
+        }               
+    )
 
-    # run_experiment(
-    #     'eps-range-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     variable_args={
-    #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 40],
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True, False]
-    #     }               
-    # )
+    run_experiment(
+        'eps-range-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True, False]
+        }               
+    )
 
-    # run_experiment(
-    #     'k-2-3-4-many-epsilon-symmetry-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     variable_args={
-    #         'k': range(2, 5),
-    #         'uniform_eps': [0, 0.00001, 0.0001, 0.001, 0.01, 1/10, 1/4, 1/3, 1/2]
-    #     },
-    #     static_args={
-    #         'symmetry': True
-    #     }            
-    # )
+    run_experiment(
+        'k-2-3-4-many-epsilon-symmetry-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': range(2, 5),
+            'uniform_eps': [0, 0.00001, 0.0001, 0.001, 0.01, 1/10, 1/4, 1/3, 1/2]
+        },
+        static_args={
+            'symmetry': True
+        }            
+    )
 
     run_experiment(
         'multiple-ks-50-trials',
