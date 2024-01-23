@@ -70,13 +70,15 @@ def replicator(
     """
     Run the replicator dynamics with k candidates per election, n elections per
     generation, and the given number of generations. Return per-generation
-    histograms.
+    histograms. k and n may be equal length lists, in which case collections of
+    elections are run in each generation for corresponding k and n values. 
     Optionally, add per-point symmetry, use a custom initial distribution
     (default: uniform), a custom voter distribution (default: uniform), more
     generations of memory, epsilon-uniform noise, or normal perturbation noise.
 
-    @k the number of candidates per election
-    @n the number of elections per generation
+    @k the number of candidates per election; optionally, a list of candidate counts
+    @n the number of elections per candidate count per generation; 
+       optionally, a list of the number of elections for each candidate count
     @gens the number of generations to run
     @symmetry if True, mirror each candidate across 1/2 w.p. 1/2
     @initial_dsn a scipy.stats distribution for the initial candidate
@@ -102,9 +104,12 @@ def replicator(
     if rng is None:
         rng = np.random.default_rng()
 
+    ks = [k] if isinstance(k, int) else k
+    ns = [n] * len(ks) if isinstance(n, int) else n
+
     # maintain a queue of the top @h candidates in the last @memory generations
     prev_positions = deque(maxlen=memory)
-    prev_positions.append(initial_dsn.rvs(n))
+    prev_positions.append(initial_dsn.rvs(sum(ns)))
 
     # save initial candidate distribution
     hists = []
@@ -113,38 +118,44 @@ def replicator(
     hists.append(hist)
 
     for t in range(gens):
+        gen_winners = np.array([])
+        gen_prev_pos = np.array([])
+
         # combine winner positions from all remembered generations
         sample_from = np.concatenate(prev_positions)
-        elections = rng.choice(sample_from, (n, k))
 
-        # add perturbation noise
-        if perturb_stdev > 0:
-            elections += rng.normal(0, perturb_stdev, (n, k))
-            elections = elections.clip(min, max)
+        for k, n in zip(ks, ns):
+            elections = rng.choice(sample_from, (n, k))
 
-        # add an epsilon-fraction of uniform candidates
-        if uniform_eps > 0:
-            uniform_idxs = rng.binomial(1, uniform_eps, (n, k)) == 1
-            elections[uniform_idxs] = (rng.random((n, k)) * (max - min) + min)[uniform_idxs]
+            # add perturbation noise
+            if perturb_stdev > 0:
+                elections += rng.normal(0, perturb_stdev, (n, k))
+                elections = elections.clip(min, max)
 
-        # mirror candidates if using symmetry
-        if symmetry:
-            flip_idx = rng.integers(0, 2, (n, k)) == 1
-            elections[flip_idx] = (1 - elections)[flip_idx]
+            # add an epsilon-fraction of uniform candidates
+            if uniform_eps > 0:
+                uniform_idxs = rng.binomial(1, uniform_eps, (n, k)) == 1
+                elections[uniform_idxs] = (rng.random((n, k)) * (max - min) + min)[uniform_idxs]
 
-        # get winner positions
-        winners = plurality(elections, voter_dsn)
-        if h == 1:
-            prev_positions.append(winners)
+            # mirror candidates if using symmetry
+            if symmetry:
+                flip_idx = rng.integers(0, 2, (n, k)) == 1
+                elections[flip_idx] = (1 - elections)[flip_idx]
 
-        # get top h positions
-        elif h > 1:
-            sorted_cands, votes = plurality_votes(elections, voter_dsn)
-            top_h_indices = np.argpartition(votes, -h, axis=1)
-            top_h_positions = np.take_along_axis(sorted_cands, top_h_indices, 1)
-            prev_positions.append(top_h_positions[:, -h:].flatten())
+            # get winner positions
+            winners = plurality(elections, voter_dsn)
+            gen_winners = np.append(gen_winners, winners)
+            if h == 1:
+                gen_prev_pos = np.append(gen_prev_pos, winners)
+            # get top h positions
+            elif h > 1:
+                sorted_cands, votes = plurality_votes(elections, voter_dsn)
+                top_h_indices = np.argpartition(votes, -h, axis=1)
+                top_h_positions = np.take_along_axis(sorted_cands, top_h_indices, 1)
+                gen_prev_pos = np.append(gen_prev_pos, top_h_positions[:, -h:].flatten())
 
-        hist, bin_edges = np.histogram(winners, bins=bins)
+        prev_positions.append(gen_prev_pos)
+        hist, bin_edges = np.histogram(gen_winners, bins=bins)
         hists.append(hist)
 
     return np.array(hists), bin_edges
@@ -222,7 +233,7 @@ if __name__ == "__main__":
     parser.add_argument('--threads', type=int)
     args = parser.parse_args()
 
-    # hists, edges = replicator(5, 100_000, 200, symmetry=True)
+    # hists, edges = replicator([2, 3, 4, 5, 6, 7], 50_000, 200, symmetry=True, uniform_eps=0.01)
     # plt.imshow(np.log(1 + hists.T), cmap='afmhot_r', aspect='auto', interpolation='nearest')
     # plt.show()
 
@@ -272,6 +283,16 @@ if __name__ == "__main__":
     #         'symmetry': True
     #     }            
     # )
+
+    run_experiment(
+        'multiple-ks-50-trials',
+        n=50_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (3, 5), (4, 5)],
+            'uniform_eps': [0, 0.01, 0.1],
+            'symmetry': [True, False]
+        },     
+    )
 
 
 
