@@ -24,18 +24,10 @@ def plurality_votes(cand_pos, voter_dsn=None):
              numpy array votes where votes[i,j] is the fraction of votes for
              candidate i, j in the sorted cands array
     """
-
-    n, k = cand_pos.shape
     sorted_cands = np.sort(cand_pos, axis=1)
-    regions = np.column_stack(
-        (
-            np.zeros((n, 1)),
-            (sorted_cands[:, 1:] + sorted_cands[:, :-1]) / 2,
-            np.ones((n, 1)),
-        )
-    )
+    regions = (sorted_cands[:, 1:] + sorted_cands[:, :-1]) / 2
     cdfs = regions if voter_dsn is None else voter_dsn.cdf(regions)
-    votes = np.diff(cdfs)
+    votes = np.diff(cdfs, prepend=0, append=1)
 
     return sorted_cands, votes
 
@@ -148,13 +140,9 @@ def replicator(
         # get top h positions
         elif h > 1:
             sorted_cands, votes = plurality_votes(elections, voter_dsn)
-            candidate_options = np.array([])
-            top_h_indices = np.argpartition(votes, -h, axis=1)[:, -h:].reshape(h * n, 1)
-            top_h_indices = np.hstack(
-                ((np.arange(n).repeat(h)).reshape(h * n, 1), top_h_indices)
-            )
-            top_h_positions = sorted_cands[top_h_indices[:, 0], top_h_indices[:, 1]]
-            prev_positions.append(top_h_positions)
+            top_h_indices = np.argpartition(votes, -h, axis=1)
+            top_h_positions = np.take_along_axis(sorted_cands, top_h_indices, 1)
+            prev_positions.append(top_h_positions[:, -h:].flatten())
 
         hist, bin_edges = np.histogram(winners, bins=bins)
         hists.append(hist)
@@ -200,9 +188,9 @@ def run_experiment(name, n, gens, trials, threads, variable_args, static_args=No
     @trials the number of replicates to run per arg setting
     @threads the number of threads to use
     @variable_args a dict whose keys are args to replicator() and whose values are
-              lists of argument settings
+                   lists of argument settings; runs every combination
     @static_args a dict whose keys are args to replicator() and whose values are
-              single argument settings
+                 single argument settings; uses these in every run
     """
     assert 'k' in variable_args, 'must specify k range in variable_args'
 
@@ -234,6 +222,10 @@ if __name__ == "__main__":
     parser.add_argument('--threads', type=int)
     args = parser.parse_args()
 
+    # hists, edges = replicator(5, 100_000, 200, symmetry=True)
+    # plt.imshow(np.log(1 + hists.T), cmap='afmhot_r', aspect='auto', interpolation='nearest')
+    # plt.show()
+
     # run_experiment(
     #     'bounded-support-eps-range-symmetry-50-trials',
     #     n=100_000, gens=200, trials=50, threads=args.threads,
@@ -249,25 +241,25 @@ if __name__ == "__main__":
     #     } 
     # )
 
-    run_experiment(
-        'eps-range-1-trial',
-        n=100_000, gens=200, trials=1, threads=args.threads,
-        variable_args={
-            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 40],
-            'uniform_eps': [0, 0.001, 0.01, 0.1],
-            'symmetry': [True, False]
-        }               
-    )
+    # run_experiment(
+    #     'eps-range-1-trial',
+    #     n=100_000, gens=200, trials=1, threads=args.threads,
+    #     variable_args={
+    #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 40],
+    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
+    #         'symmetry': [True, False]
+    #     }               
+    # )
 
-    run_experiment(
-        'eps-range-50-trials',
-        n=100_000, gens=200, trials=50, threads=args.threads,
-        variable_args={
-            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 40],
-            'uniform_eps': [0, 0.001, 0.01, 0.1],
-            'symmetry': [True, False]
-        }               
-    )
+    # run_experiment(
+    #     'eps-range-50-trials',
+    #     n=100_000, gens=200, trials=50, threads=args.threads,
+    #     variable_args={
+    #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 40],
+    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
+    #         'symmetry': [True, False]
+    #     }               
+    # )
 
     # run_experiment(
     #     'k-2-3-4-many-epsilon-symmetry-50-trials',
