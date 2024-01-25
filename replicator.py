@@ -305,30 +305,30 @@ if __name__ == "__main__":
     #     },     
     # )
 
-    run_experiment(
-        'small-sample-eps-range-50-trials',
-        n=50, gens=200, trials=50, threads=args.threads,
-        variable_args={
-            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-            'uniform_eps': [0, 0.001, 0.01, 0.1],
-            'symmetry': [True, False]
-        },     
-    )
-
-
     # run_experiment(
-    #     'k-mixture-grid',
-    #     n=100_000, gens=100, trials=1, threads=args.threads,
+    #     'small-sample-eps-range-50-trials',
+    #     n=50, gens=200, trials=50, threads=args.threads,
     #     variable_args={
-    #         'k_fracs': [(p3, p4) 
-    #                     for p3 in np.linspace(0, 1, 21)
-    #                         for p4 in np.linspace(0, 1, 21)
-    #                     if p3 + p4 <= 1],
+    #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
+    #         'symmetry': [True, False]
     #     },     
-    #     static_args={
-    #         'k': (3, 4, 5),
-    #         'symmetry': True,
-    #         'uniform_eps': 0
-    #     }
     # )
+
+
+    run_experiment(
+        'k-mixture-grid',
+        n=100_000, gens=100, trials=1, threads=args.threads,
+        variable_args={
+            'k_fracs': [(p3, p4) 
+                        for p3 in np.linspace(0, 1, 41)
+                            for p4 in np.linspace(0, 1, 41)
+                        if p3 + p4 <= 1],
+        },     
+        static_args={
+            'k': (3, 4, 5),
+            'symmetry': True,
+            'uniform_eps': 0
+        }
+    )
 

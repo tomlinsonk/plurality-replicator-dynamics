@@ -207,10 +207,39 @@ def format_eps(eps):
     else:
         return f'{eps:.2g}'
 
+def plot_mixture_grid():
+    with open('results/k-mixture-grid.pickle', 'rb') as f:
+        results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
+
+    fracs = np.linspace(0, 1, 21).tolist()
+    grid = np.full((21, 21), np.nan)
+
+    print(list(results.keys()))
+
+    for ((p3, p4),), hists in results.items():
+        row, col = fracs.index(p4), fracs.index(p3)
+        grid[row, col] = edges[1 + np.argmax(hists[-1])]
+
+    grid[grid > 0.51] = (1 - grid)[grid > 0.51]
+
+    plt.imshow(grid, origin='lower', extent=(-0.025, 1.025, -0.025, 1.025), cmap='inferno_r', vmin=0.25, vmax=0.5)
+    plt.xlabel('$k = 3$ fraction')
+    plt.ylabel('$k = 4$ fraction')
+    plt.colorbar(label='mode at $t = 100$')
+    plt.show()
+
+        
+
+    
+
+
+
 
 
 if __name__ == '__main__':
     os.makedirs('plots/', exist_ok=True)
+
+    plot_mixture_grid()
 
     # plot_heatmaps('bounded-support-eps-range-symmetry-50-trials', 'bounded-support-50-trials-eps-0', range(2, 8), epsilon=0, symmetry=False)
     # plot_heatmaps('bounded-support-eps-range-symmetry-50-trials', 'bounded-support-50-trials-eps-0-symmetry', range(2, 8), epsilon=0, symmetry=True)
@@ -249,5 +278,5 @@ if __name__ == '__main__':
     # plot_heatmaps('multiple-ks-50-trials', 'multiple-ks-eps-0.01-symmetry', [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (3, 5), (4, 5)], epsilon=0.01, symmetry=True)
     # plot_heatmaps('multiple-ks-50-trials', 'multiple-ks-eps-0.01', [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (3, 5), (4, 5)], epsilon=0.01, symmetry=False)
 
-    plot_heatmaps('small-sample-eps-range-50-trials', 'small-sample-50-trials-eps-0', [2, 3, 4, 5, 6, 7], epsilon=0, symmetry=False)
-    plot_heatmaps('small-sample-eps-range-50-trials', 'small-sample-50-trials-eps-0.01', [2, 3, 4, 5, 6, 7], epsilon=0.01, symmetry=False)
+    # plot_heatmaps('small-sample-eps-range-50-trials', 'small-sample-50-trials-eps-0', [2, 3, 4, 5, 6, 7], epsilon=0, symmetry=False)
+    # plot_heatmaps('small-sample-eps-range-50-trials', 'small-sample-50-trials-eps-0.01', [2, 3, 4, 5, 6, 7], epsilon=0.01, symmetry=False)
