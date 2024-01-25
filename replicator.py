@@ -66,7 +66,8 @@ def replicator(
     min=0,
     max=1,
     n_bins=100,
-    rng=None
+    rng=None,
+    k_fracs=None
 ):
     """
     Run the replicator dynamics with k candidates per election, n elections per
@@ -94,7 +95,12 @@ def replicator(
     @min the lowest possible candidate position (default 0)
     @max the highest possible candidate position (default 1)
     @n_bins the number of bins in the returned histograms (default 100)
-
+    @rng the random number generator to use (if None, use a new default_rng())
+    @k_fracs if not None, then a list of len(k)-1 proportions for each k value
+             per generation; the final proportion is implied by unit sum. When
+             using k_fracs, n must be a single number: the total number of
+             elections per generation
+    
     @return the tuple (hists, bin_edges) where hists is a (gens, n_bins) numpy
             array with winner counts in each bin and bin_edges is a length
             nbins+1 numpy array of the bin edges (as in np.histogram)
@@ -106,7 +112,11 @@ def replicator(
         rng = np.random.default_rng()
 
     ks = [k] if isinstance(k, int) else k
-    ns = [n] * len(ks) if isinstance(n, int) else n
+    if k_fracs is None:
+        ns = [n] * len(ks) if isinstance(n, int) else n
+    else:
+        ns = [int(n * frac) for frac in k_fracs]
+        ns += [n - sum(ns)]
 
     # maintain a queue of the top @h candidates in the last @memory generations
     prev_positions = deque(maxlen=memory)
@@ -234,7 +244,7 @@ if __name__ == "__main__":
     parser.add_argument('--threads', type=int)
     args = parser.parse_args()
 
-    # hists, edges = replicator(50, 50_000, 200, symmetry=True)
+    # hists, edges = replicator([3, 4, 5], 100_000, 200, symmetry=True, k_fracs=(0.1, 0.3))
     # plt.imshow(np.log(1 + hists.T), cmap='afmhot_r', aspect='auto', interpolation='nearest')
     # plt.show()
 
@@ -295,15 +305,30 @@ if __name__ == "__main__":
     #     },     
     # )
 
+    # run_experiment(
+    #     'small-sample-eps-range-50-trials',
+    #     n=50, gens=200, trials=50, threads=args.threads,
+    #     variable_args={
+    #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
+    #         'symmetry': [True, False]
+    #     },     
+    # )
+
+
     run_experiment(
-        'small-sample-eps-range-50-trials',
-        n=500, gens=200, trials=50, threads=args.threads,
+        'k-mixture-grid',
+        n=100_000, gens=100, trials=1, threads=args.threads,
         variable_args={
-            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-            'uniform_eps': [0, 0.001, 0.01, 0.1],
-            'symmetry': [True, False]
+            'k_fracs': [(p3, p4) 
+                        for p3 in np.linspace(0, 1, 21)
+                            for p4 in np.linspace(0, 1, 21)
+                        if p3 + p4 <= 1],
         },     
+        static_args={
+            'k': (3, 4, 5),
+            'symmetry': True,
+            'uniform_eps': 0
+        }
     )
-
-
 

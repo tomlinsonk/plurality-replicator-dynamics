@@ -250,4 +250,4 @@ if __name__ == '__main__':
     # plot_heatmaps('multiple-ks-50-trials', 'multiple-ks-eps-0.01', [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (3, 5), (4, 5)], epsilon=0.01, symmetry=False)
 
     plot_heatmaps('small-sample-eps-range-50-trials', 'small-sample-50-trials-eps-0', [2, 3, 4, 5, 6, 7], epsilon=0, symmetry=False)
-    plot_heatmaps('small-sample-eps-range-50-trials', 'small-sample-50-trials-eps-0.1', [2, 3, 4, 5, 6, 7], epsilon=0.1, symmetry=False)
+    plot_heatmaps('small-sample-eps-range-50-trials', 'small-sample-50-trials-eps-0.01', [2, 3, 4, 5, 6, 7], epsilon=0.01, symmetry=False)
