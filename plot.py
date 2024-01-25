@@ -211,29 +211,26 @@ def plot_mixture_grid():
     with open('results/k-mixture-grid.pickle', 'rb') as f:
         results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
 
-    fracs = np.linspace(0, 1, 21).tolist()
-    grid = np.full((21, 21), np.nan)
+    grid_n = 41 
 
-    print(list(results.keys()))
+    fracs = np.linspace(0, 1, grid_n).tolist()
+    grid = np.full((grid_n, grid_n), np.nan)
 
     for ((p3, p4),), hists in results.items():
         row, col = fracs.index(p4), fracs.index(p3)
         grid[row, col] = edges[1 + np.argmax(hists[-1])]
 
-    grid[grid > 0.51] = (1 - grid)[grid > 0.51]
+    grid[grid > 0.5] = (1 - grid)[grid > 0.5]
 
-    plt.imshow(grid, origin='lower', extent=(-0.025, 1.025, -0.025, 1.025), cmap='inferno_r', vmin=0.25, vmax=0.5)
+    plt.imshow(grid, origin='lower', 
+               extent=(- fracs[1]/2, 1 + fracs[1]/2, - fracs[1]/2, 1 + fracs[1]/2), 
+               cmap='inferno_r', vmax=0.5)
     plt.xlabel('$k = 3$ fraction')
     plt.ylabel('$k = 4$ fraction')
     plt.colorbar(label='mode at $t = 100$')
-    plt.show()
-
+    plt.savefig('plots/k-mixture-heatmap.pdf', bbox_inches='tight')
+    plt.close()
         
-
-    
-
-
-
 
 
 if __name__ == '__main__':
