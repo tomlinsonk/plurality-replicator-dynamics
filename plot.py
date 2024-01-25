@@ -260,19 +260,19 @@ if __name__ == '__main__':
 
 
             for trials in ('1-trial', '50-trials'):
-                    plot_heatmaps(f'eps-range-{trials}',
-                                  f'small-k-{trials}-eps-{eps}{sym_str}',
-                                  range(2, 8), 
-                                  {'uniform_eps': eps, 'symmetry': symmetry})
-                    
-                    plot_heatmaps(f'eps-range-{trials}',
-                                  f'large-k-{trials}-eps-{eps}{sym_str}',
-                                  [8, 9, 10, 15, 25, 50], 
-                                  {'uniform_eps': eps, 'symmetry': symmetry})
+                plot_heatmaps(f'eps-range-{trials}',
+                                f'small-k-{trials}-eps-{eps}{sym_str}',
+                                range(2, 8), 
+                                {'uniform_eps': eps, 'symmetry': symmetry})
+                
+                plot_heatmaps(f'eps-range-{trials}',
+                                f'large-k-{trials}-eps-{eps}{sym_str}',
+                                [8, 9, 10, 15, 25, 50], 
+                                {'uniform_eps': eps, 'symmetry': symmetry})
 
 
-    # plot_noisy_convergence()
-    # plot_cdf_bounds()
-    # plot_mixture_grid()
+    plot_noisy_convergence()
+    plot_cdf_bounds()
+    plot_mixture_grid()
 
 
