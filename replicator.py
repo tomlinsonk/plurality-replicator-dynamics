@@ -214,7 +214,7 @@ def run_experiment(name, n, gens, trials, threads, variable_args, static_args=No
     @static_args a dict whose keys are args to replicator() and whose values are
                  single argument settings; uses these in every run
     """
-    assert 'k' in variable_args, 'must specify k range in variable_args'
+    assert 'k' in variable_args or 'k' in static_args, 'must specify k range'
 
     print('Running', name)
 
