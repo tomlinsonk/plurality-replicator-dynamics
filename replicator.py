@@ -30,7 +30,10 @@ def plurality_votes(cand_pos, voter_dsn=None):
     cdfs = regions if voter_dsn is None else voter_dsn.cdf(regions)
     votes = np.diff(cdfs, prepend=0, append=1)
 
-    return sorted_cands, votes + np.random.random(votes.shape) * 1e-10  # break ties at random
+    return (
+        sorted_cands,
+        votes + np.random.random(votes.shape) * 1e-10,
+    )  # break ties at random
 
 
 def plurality(cand_pos, voter_dsn=None):
@@ -67,19 +70,19 @@ def replicator(
     max=1,
     n_bins=100,
     rng=None,
-    k_fracs=None
+    k_fracs=None,
 ):
     """
     Run the replicator dynamics with k candidates per election, n elections per
     generation, and the given number of generations. Return per-generation
     histograms. k and n may be equal length lists, in which case collections of
-    elections are run in each generation for corresponding k and n values. 
+    elections are run in each generation for corresponding k and n values.
     Optionally, add per-point symmetry, use a custom initial distribution
     (default: uniform), a custom voter distribution (default: uniform), more
     generations of memory, epsilon-uniform noise, or normal perturbation noise.
 
     @k the number of candidates per election; optionally, a list of candidate counts
-    @n the number of elections per candidate count per generation; 
+    @n the number of elections per candidate count per generation;
        optionally, a list of the number of elections for each candidate count
     @gens the number of generations to run
     @symmetry if True, mirror each candidate across 1/2 w.p. 1/2
@@ -100,7 +103,7 @@ def replicator(
              per generation; the final proportion is implied by unit sum. When
              using k_fracs, n must be a single number: the total number of
              elections per generation
-    
+
     @return the tuple (hists, bin_edges) where hists is a (gens, n_bins) numpy
             array with winner counts in each bin and bin_edges is a length
             nbins+1 numpy array of the bin edges (as in np.histogram)
@@ -146,7 +149,9 @@ def replicator(
             # add an epsilon-fraction of uniform candidates
             if uniform_eps > 0:
                 uniform_idxs = rng.binomial(1, uniform_eps, (n, k)) == 1
-                elections[uniform_idxs] = (rng.random((n, k)) * (max - min) + min)[uniform_idxs]
+                elections[uniform_idxs] = (rng.random((n, k)) * (max - min) + min)[
+                    uniform_idxs
+                ]
 
             # mirror candidates if using symmetry
             if symmetry:
@@ -163,7 +168,9 @@ def replicator(
                 sorted_cands, votes = plurality_votes(elections, voter_dsn)
                 top_h_indices = np.argpartition(votes, -h, axis=1)
                 top_h_positions = np.take_along_axis(sorted_cands, top_h_indices, 1)
-                gen_prev_pos = np.append(gen_prev_pos, top_h_positions[:, -h:].flatten())
+                gen_prev_pos = np.append(
+                    gen_prev_pos, top_h_positions[:, -h:].flatten()
+                )
 
         prev_positions.append(gen_prev_pos)
         hist, bin_edges = np.histogram(gen_winners, bins=bins)
@@ -184,13 +191,13 @@ def replicator_helper(arg_setting, arg_names, n, gens, static_args):
     @static_args additional fixed argumnets for replicator
 
     @return the tuple (arg_settings, hists, edges), with trial ID stripped from
-            arg_settings 
+            arg_settings
     """
 
     kwargs = {key: val for key, val in zip(arg_names, arg_setting[:-1])}
-    kwargs['n'] = n
-    kwargs['gens'] = gens
-    kwargs['rng'] = np.random.default_rng(abs(hash(arg_setting)))
+    kwargs["n"] = n
+    kwargs["gens"] = gens
+    kwargs["rng"] = np.random.default_rng(abs(hash(arg_setting)))
     if static_args is not None:
         kwargs.update(static_args)
 
@@ -214,34 +221,37 @@ def run_experiment(name, n, gens, trials, threads, variable_args, static_args=No
     @static_args a dict whose keys are args to replicator() and whose values are
                  single argument settings; uses these in every run
     """
-    assert 'k' in variable_args or 'k' in static_args, 'must specify k range'
+    assert "k" in variable_args or "k" in static_args, "must specify k range"
 
-    print('Running', name)
+    print("Running", name)
 
     arg_names = sorted(variable_args.keys())
     arg_lists = [list(variable_args[p]) for p in arg_names]
-    helper = partial(replicator_helper, arg_names=arg_names, n=n, gens=gens, static_args=static_args)
+    helper = partial(
+        replicator_helper, arg_names=arg_names, n=n, gens=gens, static_args=static_args
+    )
 
     settings = itertools.product(*(arg_lists + [list(range(trials))]))
     total = trials * np.prod([len(p) for p in arg_lists])
     results = dict()
 
     with Pool(threads) as pool:
-        for setting, hists, edges in tqdm(pool.imap_unordered(helper, settings),
-                                          total=total):
+        for setting, hists, edges in tqdm(
+            pool.imap_unordered(helper, settings), total=total
+        ):
             if setting not in results:
                 results[setting] = hists
             else:
                 results[setting] += hists
 
-    os.makedirs('results/', exist_ok=True)
-    with open(f'results/{name}.pickle', 'wb') as f:
+    os.makedirs("results/", exist_ok=True)
+    with open(f"results/{name}.pickle", "wb") as f:
         pickle.dump((results, n, gens, trials, arg_names, arg_lists, edges), f)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--threads', type=int)
+    parser.add_argument("--threads", type=int)
     args = parser.parse_args()
 
     # hists, edges = replicator([3, 4, 5], 100_000, 200, symmetry=True, k_fracs=(0.1, 0.3))
@@ -260,7 +270,7 @@ if __name__ == "__main__":
     #         'min': 1/4,
     #         'max': 3/4,
     #         'initial_dsn': stats.uniform(1/4, 1/2)
-    #     } 
+    #     }
     # )
 
     # run_experiment(
@@ -270,7 +280,7 @@ if __name__ == "__main__":
     #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
     #         'uniform_eps': [0, 0.001, 0.01, 0.1],
     #         'symmetry': [True, False]
-    #     }               
+    #     }
     # )
 
     # run_experiment(
@@ -280,7 +290,7 @@ if __name__ == "__main__":
     #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
     #         'uniform_eps': [0, 0.001, 0.01, 0.1],
     #         'symmetry': [True, False]
-    #     }               
+    #     }
     # )
 
     # run_experiment(
@@ -292,7 +302,7 @@ if __name__ == "__main__":
     #     },
     #     static_args={
     #         'symmetry': True
-    #     }            
+    #     }
     # )
 
     # run_experiment(
@@ -302,7 +312,7 @@ if __name__ == "__main__":
     #         'k': [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (3, 5), (4, 5)],
     #         'uniform_eps': [0, 0.01, 0.1],
     #         'symmetry': [True, False]
-    #     },     
+    #     },
     # )
 
     # run_experiment(
@@ -312,23 +322,69 @@ if __name__ == "__main__":
     #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
     #         'uniform_eps': [0, 0.001, 0.01, 0.1],
     #         'symmetry': [True, False]
-    #     },     
+    #     },
     # )
 
+    # run_experiment(
+    #     'k-mixture-grid',
+    #     n=100_000, gens=100, trials=1, threads=args.threads,
+    #     variable_args={
+    #         'k_fracs': [(p3, p4)
+    #                     for p3 in np.linspace(0, 1, 41)
+    #                         for p4 in np.linspace(0, 1, 41)
+    #                     if p3 + p4 <= 1],
+    #     },
+    #     static_args={
+    #         'k': (3, 4, 5),
+    #         'symmetry': True,
+    #         'uniform_eps': 0
+    #     }
+    # )
 
-    run_experiment(
-        'k-mixture-grid',
-        n=100_000, gens=100, trials=1, threads=args.threads,
-        variable_args={
-            'k_fracs': [(p3, p4) 
-                        for p3 in np.linspace(0, 1, 41)
-                            for p4 in np.linspace(0, 1, 41)
-                        if p3 + p4 <= 1],
-        },     
-        static_args={
-            'k': (3, 4, 5),
-            'symmetry': True,
-            'uniform_eps': 0
-        }
-    )
+    # beta_2 = stats.beta(2, 2)
+    # beta_half = stats.beta(0.5, 0.5)
+    # dweibull = stats.dweibull(c=4, loc=0.5, scale=0.3)
 
+    # run_experiment(
+    #     "beta-2-voters-range-50-trials",
+    #     n=100_000,
+    #     gens=200,
+    #     trials=50,
+    #     threads=args.threads,
+    #     variable_args={
+    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+    #     },
+    #     static_args={
+    #         "voter_dsn": beta_2,
+    #         "symmetry": False,
+    #     },
+    # )
+
+    # run_experiment(
+    #     "beta-half-voters-range-50-trials",
+    #     n=100_000,
+    #     gens=200,
+    #     trials=50,
+    #     threads=args.threads,
+    #     variable_args={
+    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+    #     },
+    #     static_args={
+    #         "voter_dsn": beta_half,
+    #         "symmetry": False,
+    #     },
+    # )
+    # run_experiment(
+    #     "dweibull-voters-range-50-trials",
+    #     n=100_000,
+    #     gens=200,
+    #     trials=50,
+    #     threads=args.threads,
+    #     variable_args={
+    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+    #     },
+    #     static_args={
+    #         "voter_dsn": dweibull,
+    #         "symmetry": False,
+    #     },
+    # )
