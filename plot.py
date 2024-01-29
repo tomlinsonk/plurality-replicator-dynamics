@@ -243,57 +243,6 @@ def plot_mixture_grid():
 if __name__ == "__main__":
     os.makedirs("plots/", exist_ok=True)
 
-    # for pert in (0.0001, 0.001, 0.01):
-    #     plot_heatmaps(
-    #         "pert-range-50-trials",
-    #         f"pert-range-50-trials-{pert}",
-    #         range(2, 8),
-    #         {
-    #             "perturb_stdev": pert,
-    #         },
-    #     )
-
-    # for m in (1, 2, 3):
-    #     plot_heatmaps(
-    #         "memory-range-50-trials",
-    #         f"memory-range-50-trials-{m}",
-    #         range(2, 8),
-    #         {
-    #             "memory": m,
-    #         },
-    #     )
-
-    # for h in (2, 3):
-    #     plot_heatmaps(
-    #         "top-h-range-50-trials",
-    #         f"top-h-range-50-trials-{h}",
-    #         range(4, 10),
-    #         {
-    #             "h": h,
-    #         },
-    #     )
-
-    # plot_heatmaps(
-    #     "beta-2-voters-range-50-trials",
-    #     f"beta-2-voters-range-50-trials",
-    #     range(2, 8),
-    #     {},
-    # )
-
-    # plot_heatmaps(
-    #     "beta-half-voters-range-50-trials",
-    #     f"beta-half-voters-range-50-trials",
-    #     range(2, 8),
-    #     {},
-    # )
-
-    # plot_heatmaps(
-    #     "dweibull-voters-range-50-trials",
-    #     f"dweibull-voters-range-50-trials",
-    #     range(2, 8),
-    #     {},
-    # )
-
     # for eps in (0, 0.01):
     #     plot_heatmaps(
     #         "small-sample-eps-range-50-trials",
@@ -333,6 +282,56 @@ if __name__ == "__main__":
     #                 [8, 9, 10, 15, 25, 50],
     #                 {"uniform_eps": eps, "symmetry": symmetry},
     #             )
+
+    # Variants
+
+    # for pert in (0.0001, 0.001, 0.01):
+    #     plot_heatmaps(
+    #         "pert-range-50-trials",
+    #         f"pert-range-50-trials-{pert}",
+    #         range(2, 8),
+    #         {
+    #             "perturb_stdev": pert,
+    #         },
+    #     )
+
+    # for m in (2, 3):
+    #     plot_heatmaps(
+    #         "memory-range-50-trials",
+    #         f"memory-range-50-trials-{m}",
+    #         range(2, 8),
+    #         {
+    #             "memory": m,
+    #         },
+    #     )
+
+    # plot_heatmaps(
+    #     "top-2-range-50-trials",
+    #     f"top-2-range-50-trials",
+    #     range(3, 9),
+    #     {},
+    # )
+
+    # plot_heatmaps(
+    #     "beta-2-voters-range-50-trials",
+    #     f"beta-2-voters-range-50-trials",
+    #     range(2, 8),
+    #     {},
+    # )
+
+    # plot_heatmaps(
+    #     "beta-half-voters-range-50-trials",
+    #     f"beta-half-voters-range-50-trials",
+    #     range(2, 8),
+    #     {},
+    # )
+
+    # plot_heatmaps(
+    #     "dweibull-voters-range-50-trials",
+    #     f"dweibull-voters-range-50-trials",
+    #     range(2, 8),
+    #     {},
+    # )
 
     # plot_noisy_convergence()
     # plot_cdf_bounds()
