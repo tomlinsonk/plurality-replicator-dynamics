@@ -430,3 +430,29 @@ if __name__ == "__main__":
     #         "symmetry": False,
     #     },
     # )
+
+    # run_experiment(
+    #     "pert-middle-values-50-trials",
+    #     n=100_000,
+    #     gens=200,
+    #     trials=50,
+    #     threads=args.threads,
+    #     variable_args={
+    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+    #         "perturb_stdev": [0.002, 0.005],
+    #     },
+    #     static_args={"symmetry": False},
+    # )
+
+    # run_experiment(
+    #     "pert-range-1-trial",
+    #     n=100_000,
+    #     gens=200,
+    #     trials=1,
+    #     threads=args.threads,
+    #     variable_args={
+    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+    #         "perturb_stdev": [0.0001, 0.001, 0.002, 0.005, 0.01],
+    #     },
+    #     static_args={"symmetry": False},
+    # )

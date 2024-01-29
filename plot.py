@@ -333,6 +333,33 @@ if __name__ == "__main__":
     #     {},
     # )
 
+    # for pert in (0.002, 0.005):
+    #     plot_heatmaps(
+    #         "pert-middle-values-50-trials",
+    #         f"pert-middle-values-50-trials-{pert}",
+    #         range(2, 8),
+    #         {
+    #             "perturb_stdev": pert,
+    #         },
+    #     )
+    # for pert in (0.0001, 0.001, 0.002, 0.005, 0.01):
+    #     plot_heatmaps(
+    #         "pert-range-1-trial",
+    #         f"pert-small-k-range-1-trial-{pert}",
+    #         range(2, 8),
+    #         {
+    #             "perturb_stdev": pert,
+    #         },
+    #     )
+    #     plot_heatmaps(
+    #         "pert-range-1-trial",
+    #         f"pert-large-k-range-1-trial-{pert}",
+    #         [9, 10, 15, 25, 50],
+    #         {
+    #             "perturb_stdev": pert,
+    #         },
+    #     )
+
     # plot_noisy_convergence()
     # plot_cdf_bounds()
     # plot_mixture_grid()
