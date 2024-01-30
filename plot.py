@@ -14,11 +14,12 @@ matplotlib.rcParams["ps.fonttype"] = 42
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
-def plot_heatmaps(pickle_name, plot_name, ks, args, xticks=(0, 100, 200)):
+def plot_heatmaps(pickle_name, plot_name, ks, args, xticks=(0, 100, 200), 
+                  suptitle=None, figsize=(15, 2), show=False):
     with open(f"results/{pickle_name}.pickle", "rb") as f:
         results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
 
-    fig, axes = plt.subplots(1, len(ks), figsize=(15, 2))
+    fig, axes = plt.subplots(1, len(ks), figsize=figsize)
 
     for i, k in enumerate(ks):
         args["k"] = k
@@ -33,7 +34,12 @@ def plot_heatmaps(pickle_name, plot_name, ks, args, xticks=(0, 100, 200)):
 
         axes[i].set_title(f"$k = {k}$")
 
+    if suptitle is not None:
+        axes[0].set_ylabel(suptitle, fontweight='bold')
+
     plt.savefig(f"plots/{plot_name}.pdf", bbox_inches="tight", dpi=500)
+    if show:
+        plt.show()
     plt.close()
 
 
@@ -240,6 +246,92 @@ def plot_mixture_grid():
     plt.close()
 
 
+def make_small_variants_plots():
+    figsize = (6, 2)
+    k_range = range(3, 7)
+    os.makedirs("plots/small-variants/", exist_ok=True)
+
+    for pert in (0.001, 0.01):
+        plot_heatmaps(
+            "pert-range-50-trials",
+            f"small-variants/pert-range-50-trials-{pert}",
+            k_range,
+            {
+                "perturb_stdev": pert,
+            },
+            suptitle=f"Perturb. noise, $\sigma^2 = {pert}$",
+            figsize=figsize
+        )
+
+    plot_heatmaps(
+        "beta-2-voters-range-50-trials",
+        f"small-variants/beta-2-voters-range-50-trials",
+        k_range,
+        {},
+        suptitle=f"Beta(2, 2) voters",
+        figsize=figsize
+    )
+
+    plot_heatmaps(
+        "beta-half-voters-range-50-trials",
+        f"small-variants/beta-half-voters-range-50-trials",
+        k_range,
+        {},
+        suptitle=f"Beta(0.5, 0.5) voters",
+        figsize=figsize
+    )
+
+    plot_heatmaps(
+        "dweibull-voters-range-50-trials",
+        f"small-variants/dweibull-voters-range-50-trials",
+        k_range,
+        {},
+        suptitle=f"dWeibull(4, .5, .3) voters",
+        figsize=figsize
+    )
+
+    m = 2
+    plot_heatmaps(
+        "memory-range-50-trials",
+        f"small-variants/memory-range-50-trials-{m}",
+        k_range,
+        {
+            "memory": m,
+        },
+        suptitle=f"Memory, $m= {m}$",
+        figsize=figsize
+    )
+
+    plot_heatmaps(
+        "top-2-range-50-trials",
+        f"small-variants/top-2-range-50-trials",
+        k_range,
+        {},
+        suptitle=f"Top-2 copying",
+        figsize=figsize
+    )
+
+    pert = 0.005
+    plot_heatmaps(
+        "pert-middle-values-50-trials",
+        f"small-variants/pert-middle-values-50-trials-{pert}",
+        k_range,
+        {
+            "perturb_stdev": pert,
+        },
+        suptitle=f"Perturb. noise, $\sigma^2 = {pert}$",
+        figsize=figsize
+    )
+
+    plot_heatmaps(
+        "multiple-ks-50-trials",
+        f"small-variants/multiple-ks-eps-0",
+        [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7)],
+        {"uniform_eps": 0, "symmetry": False},
+        suptitle="Multiple $k$s",
+        figsize=figsize
+    )
+
 if __name__ == "__main__":
     os.makedirs("plots/", exist_ok=True)
 
@@ -284,7 +376,8 @@ if __name__ == "__main__":
     #             )
 
     # Variants
-
+    make_small_variants_plots()
+    
     # for pert in (0.0001, 0.001, 0.01):
     #     plot_heatmaps(
     #         "pert-range-50-trials",
@@ -293,6 +386,7 @@ if __name__ == "__main__":
     #         {
     #             "perturb_stdev": pert,
     #         },
+    #         suptitle=f"Perturbation noise, $\sigma^2 = {pert}$"
     #     )
 
     # for m in (2, 3):
@@ -303,6 +397,7 @@ if __name__ == "__main__":
     #         {
     #             "memory": m,
     #         },
+    #         suptitle=f"Memory, $m= {m}$"
     #     )
 
     # plot_heatmaps(
@@ -310,6 +405,7 @@ if __name__ == "__main__":
     #     f"top-2-range-50-trials",
     #     range(3, 9),
     #     {},
+    #     suptitle=f"Top-2 copying"
     # )
 
     # plot_heatmaps(
@@ -317,6 +413,7 @@ if __name__ == "__main__":
     #     f"beta-2-voters-range-50-trials",
     #     range(2, 8),
     #     {},
+    #     suptitle=f"Beta(2, 2) voters"
     # )
 
     # plot_heatmaps(
@@ -324,6 +421,7 @@ if __name__ == "__main__":
     #     f"beta-half-voters-range-50-trials",
     #     range(2, 8),
     #     {},
+    #     suptitle=f"Beta(0.5, 0.5) voters"
     # )
 
     # plot_heatmaps(
@@ -331,6 +429,7 @@ if __name__ == "__main__":
     #     f"dweibull-voters-range-50-trials",
     #     range(2, 8),
     #     {},
+    #     suptitle=f"double Weibull voters"
     # )
 
     # for pert in (0.002, 0.005):
@@ -341,6 +440,7 @@ if __name__ == "__main__":
     #         {
     #             "perturb_stdev": pert,
     #         },
+    #         suptitle=f"Perturbation noise, $\sigma^2 = {pert}$"
     #     )
     # for pert in (0.0001, 0.001, 0.002, 0.005, 0.01):
     #     plot_heatmaps(
@@ -350,14 +450,16 @@ if __name__ == "__main__":
     #         {
     #             "perturb_stdev": pert,
     #         },
+    #         suptitle=f"$\sigma^2 = {pert}$"
     #     )
     #     plot_heatmaps(
     #         "pert-range-1-trial",
     #         f"pert-large-k-range-1-trial-{pert}",
-    #         [9, 10, 15, 25, 50],
+    #         [8, 9, 10, 15, 25, 50],
     #         {
     #             "perturb_stdev": pert,
     #         },
+    #         # suptitle=f"Perturbation noise, $\sigma^2 = {pert}$"
     #     )
 
     # plot_noisy_convergence()
