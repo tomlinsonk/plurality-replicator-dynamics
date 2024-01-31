@@ -332,6 +332,46 @@ def make_small_variants_plots():
         figsize=figsize
     )
 
+
+
+def plot_voter_pdfs():
+    fig, axes = plt.subplots(1, 3, figsize=(10, 2), sharey=True)
+
+    beta_2 = stats.beta(2, 2)
+    beta_half = stats.beta(0.5, 0.5)
+    dweibull = stats.dweibull(c=4, loc=0.5, scale=0.3)
+
+    x = np.linspace(0, 1, 1000)
+
+    # plot beta_2
+    pdf = beta_2.pdf(x)
+    axes[0].plot(x, pdf, "-", label="Beta(2,2) pdf")
+    axes[0].title.set_text("Beta(2, 2)")
+    axes[0].fill_between(x, pdf, alpha=0.5)
+    axes[0].set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    axes[0].set_ylim(0, 3)
+    axes[0].set_xlim(0, 1)
+
+    # plot beta_half
+    pdf = beta_half.pdf(x)
+    axes[1].plot(x, pdf, "-", label="Beta(0.5,0.5) pdf")
+    axes[1].title.set_text("Beta(0.5, 0.5)")
+    axes[1].fill_between(x, pdf, alpha=0.5)
+    axes[1].set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    axes[1].set_xlim(0, 1)
+
+    # plot dweibull
+    pdf = dweibull.pdf(x)
+    axes[2].plot(x, pdf, "-", label="dweibull pdf")
+    axes[2].title.set_text("Double Weibull(4, 0.5, 0.3)")
+    axes[2].fill_between(x, pdf, alpha=0.5)
+    axes[2].set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    axes[2].set_xlim(0, 1)
+
+    plt.savefig(f"plots/voter_dsn_pdfs.pdf", bbox_inches="tight", dpi=500)
+    plt.close()
+
+
 if __name__ == "__main__":
     os.makedirs("plots/", exist_ok=True)
 
@@ -376,7 +416,7 @@ if __name__ == "__main__":
     #             )
 
     # Variants
-    make_small_variants_plots()
+    # make_small_variants_plots()
     
     # for pert in (0.0001, 0.001, 0.01):
     #     plot_heatmaps(
@@ -465,3 +505,4 @@ if __name__ == "__main__":
     # plot_noisy_convergence()
     # plot_cdf_bounds()
     # plot_mixture_grid()
+    plot_voter_pdfs()
