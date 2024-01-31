@@ -369,6 +369,18 @@ if __name__ == "__main__":
     # )
 
     # run_experiment(
+    #     "top-3-range-50-trials",
+    #     n=100_000,
+    #     gens=200,
+    #     trials=50,
+    #     threads=args.threads,
+    #     variable_args={
+    #         "k": [3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+    #     },
+    #     static_args={"symmetry": False, "h": 3},
+    # )
+
+    # run_experiment(
     #     "memory-range-50-trials",
     #     n=100_000,
     #     gens=200,

@@ -14,8 +14,16 @@ matplotlib.rcParams["ps.fonttype"] = 42
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
-def plot_heatmaps(pickle_name, plot_name, ks, args, xticks=(0, 100, 200), 
-                  suptitle=None, figsize=(15, 2), show=False):
+def plot_heatmaps(
+    pickle_name,
+    plot_name,
+    ks,
+    args,
+    xticks=(0, 100, 200),
+    suptitle=None,
+    figsize=(15, 2),
+    show=False,
+):
     with open(f"results/{pickle_name}.pickle", "rb") as f:
         results, n, gens, trials, arg_names, arg_lists, edges = pickle.load(f)
 
@@ -35,7 +43,7 @@ def plot_heatmaps(pickle_name, plot_name, ks, args, xticks=(0, 100, 200),
         axes[i].set_title(f"$k = {k}$")
 
     if suptitle is not None:
-        axes[0].set_ylabel(suptitle, fontweight='bold')
+        axes[0].set_ylabel(suptitle, fontweight="bold")
 
     plt.savefig(f"plots/{plot_name}.pdf", bbox_inches="tight", dpi=500)
     if show:
@@ -260,7 +268,7 @@ def make_small_variants_plots():
                 "perturb_stdev": pert,
             },
             suptitle=f"Perturb. noise, $\sigma^2 = {pert}$",
-            figsize=figsize
+            figsize=figsize,
         )
 
     plot_heatmaps(
@@ -269,7 +277,7 @@ def make_small_variants_plots():
         k_range,
         {},
         suptitle=f"Beta(2, 2) voters",
-        figsize=figsize
+        figsize=figsize,
     )
 
     plot_heatmaps(
@@ -278,7 +286,7 @@ def make_small_variants_plots():
         k_range,
         {},
         suptitle=f"Beta(0.5, 0.5) voters",
-        figsize=figsize
+        figsize=figsize,
     )
 
     plot_heatmaps(
@@ -287,7 +295,7 @@ def make_small_variants_plots():
         k_range,
         {},
         suptitle=f"dWeibull(4, .5, .3) voters",
-        figsize=figsize
+        figsize=figsize,
     )
 
     m = 2
@@ -299,7 +307,7 @@ def make_small_variants_plots():
             "memory": m,
         },
         suptitle=f"Memory, $m= {m}$",
-        figsize=figsize
+        figsize=figsize,
     )
 
     plot_heatmaps(
@@ -308,7 +316,7 @@ def make_small_variants_plots():
         k_range,
         {},
         suptitle=f"Top-2 copying",
-        figsize=figsize
+        figsize=figsize,
     )
 
     pert = 0.005
@@ -320,7 +328,7 @@ def make_small_variants_plots():
             "perturb_stdev": pert,
         },
         suptitle=f"Perturb. noise, $\sigma^2 = {pert}$",
-        figsize=figsize
+        figsize=figsize,
     )
 
     plot_heatmaps(
@@ -329,8 +337,9 @@ def make_small_variants_plots():
         [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7)],
         {"uniform_eps": 0, "symmetry": False},
         suptitle="Multiple $k$s",
-        figsize=figsize
+        figsize=figsize,
     )
+
 
 if __name__ == "__main__":
     os.makedirs("plots/", exist_ok=True)
@@ -377,7 +386,7 @@ if __name__ == "__main__":
 
     # Variants
     make_small_variants_plots()
-    
+
     # for pert in (0.0001, 0.001, 0.01):
     #     plot_heatmaps(
     #         "pert-range-50-trials",
@@ -406,6 +415,13 @@ if __name__ == "__main__":
     #     range(3, 9),
     #     {},
     #     suptitle=f"Top-2 copying"
+    # )
+
+    # plot_heatmaps(
+    #     "top-3-range-50-trials",
+    #     f"top-3-range-50-trials",
+    #     [4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+    #     {},
     # )
 
     # plot_heatmaps(
