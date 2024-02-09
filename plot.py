@@ -383,141 +383,141 @@ def plot_voter_pdfs():
 if __name__ == "__main__":
     os.makedirs("plots/", exist_ok=True)
 
-    # for eps in (0, 0.01):
-    #     plot_heatmaps(
-    #         "small-sample-eps-range-50-trials",
-    #         f"small-sample-50-trials-eps-{eps}",
-    #         range(2, 8),
-    #         {"uniform_eps": eps, "symmetry": False},
-    #     )
+    for eps in (0, 0.01):
+        plot_heatmaps(
+            "small-sample-eps-range-50-trials",
+            f"small-sample-50-trials-eps-{eps}",
+            range(2, 8),
+            {"uniform_eps": eps, "symmetry": False},
+        )
 
-    #     for symmetry in (True, False):
-    #         sym_str = "-symmetry" if symmetry else ""
+        for symmetry in (True, False):
+            sym_str = "-symmetry" if symmetry else ""
 
-    #         plot_heatmaps(
-    #             "bounded-support-eps-range-symmetry-50-trials",
-    #             f"bounded-support-50-trials-eps-{eps}{sym_str}",
-    #             range(2, 8),
-    #             {"uniform_eps": eps, "symmetry": symmetry},
-    #         )
+            plot_heatmaps(
+                "bounded-support-eps-range-symmetry-50-trials",
+                f"bounded-support-50-trials-eps-{eps}{sym_str}",
+                range(2, 8),
+                {"uniform_eps": eps, "symmetry": symmetry},
+            )
 
-    #         plot_heatmaps(
-    #             "multiple-ks-50-trials",
-    #             f"multiple-ks-eps-{eps}{sym_str}-symmetry",
-    #             [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (3, 5), (4, 5)],
-    #             {"uniform_eps": eps, "symmetry": symmetry},
-    #         )
+            plot_heatmaps(
+                "multiple-ks-50-trials",
+                f"multiple-ks-eps-{eps}{sym_str}-symmetry",
+                [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (3, 5), (4, 5)],
+                {"uniform_eps": eps, "symmetry": symmetry},
+            )
 
-    #         for trials in ("1-trial", "50-trials"):
-    #             plot_heatmaps(
-    #                 f"eps-range-{trials}",
-    #                 f"small-k-{trials}-eps-{eps}{sym_str}",
-    #                 range(2, 8),
-    #                 {"uniform_eps": eps, "symmetry": symmetry},
-    #             )
+            for trials in ("1-trial", "50-trials"):
+                plot_heatmaps(
+                    f"eps-range-{trials}",
+                    f"small-k-{trials}-eps-{eps}{sym_str}",
+                    range(2, 8),
+                    {"uniform_eps": eps, "symmetry": symmetry},
+                )
 
-    #             plot_heatmaps(
-    #                 f"eps-range-{trials}",
-    #                 f"large-k-{trials}-eps-{eps}{sym_str}",
-    #                 [8, 9, 10, 15, 25, 50],
-    #                 {"uniform_eps": eps, "symmetry": symmetry},
-    #             )
+                plot_heatmaps(
+                    f"eps-range-{trials}",
+                    f"large-k-{trials}-eps-{eps}{sym_str}",
+                    [8, 9, 10, 15, 25, 50],
+                    {"uniform_eps": eps, "symmetry": symmetry},
+                )
 
     # Variants
-    # make_small_variants_plots()
+    make_small_variants_plots()
     
-    # for pert in (0.0001, 0.001, 0.01):
-    #     plot_heatmaps(
-    #         "pert-range-50-trials",
-    #         f"pert-range-50-trials-{pert}",
-    #         range(2, 8),
-    #         {
-    #             "perturb_stdev": pert,
-    #         },
-    #         suptitle=f"Perturbation noise, $\sigma^2 = {pert}$"
-    #     )
+    for pert in (0.0001, 0.001, 0.01):
+        plot_heatmaps(
+            "pert-range-50-trials",
+            f"pert-range-50-trials-{pert}",
+            range(2, 8),
+            {
+                "perturb_stdev": pert,
+            },
+            suptitle=f"Perturbation noise, $\sigma^2 = {pert}$"
+        )
 
-    # for m in (2, 3):
-    #     plot_heatmaps(
-    #         "memory-range-50-trials",
-    #         f"memory-range-50-trials-{m}",
-    #         range(2, 8),
-    #         {
-    #             "memory": m,
-    #         },
-    #         suptitle=f"Memory, $m= {m}$"
-    #     )
+    for m in (2, 3):
+        plot_heatmaps(
+            "memory-range-50-trials",
+            f"memory-range-50-trials-{m}",
+            range(2, 8),
+            {
+                "memory": m,
+            },
+            suptitle=f"Memory, $m= {m}$"
+        )
 
-    # plot_heatmaps(
-    #     "top-2-range-50-trials",
-    #     f"top-2-range-50-trials",
-    #     range(3, 9),
-    #     {},
-    #     suptitle=f"Top-2 copying"
-    # )
+    plot_heatmaps(
+        "top-2-range-50-trials",
+        f"top-2-range-50-trials",
+        range(3, 9),
+        {},
+        suptitle=f"Top-2 copying"
+    )
 
-    # plot_heatmaps(
-    #     "top-3-range-50-trials",
-    #     f"top-3-range-50-trials",
-    #     [4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #     {},
-    # )
+    plot_heatmaps(
+        "top-3-range-50-trials",
+        f"top-3-range-50-trials",
+        [4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+        {},
+    )
 
-    # plot_heatmaps(
-    #     "beta-2-voters-range-50-trials",
-    #     f"beta-2-voters-range-50-trials",
-    #     range(2, 8),
-    #     {},
-    #     suptitle=f"Beta(2, 2) voters"
-    # )
+    plot_heatmaps(
+        "beta-2-voters-range-50-trials",
+        f"beta-2-voters-range-50-trials",
+        range(2, 8),
+        {},
+        suptitle=f"Beta(2, 2) voters"
+    )
 
-    # plot_heatmaps(
-    #     "beta-half-voters-range-50-trials",
-    #     f"beta-half-voters-range-50-trials",
-    #     range(2, 8),
-    #     {},
-    #     suptitle=f"Beta(0.5, 0.5) voters"
-    # )
+    plot_heatmaps(
+        "beta-half-voters-range-50-trials",
+        f"beta-half-voters-range-50-trials",
+        range(2, 8),
+        {},
+        suptitle=f"Beta(0.5, 0.5) voters"
+    )
 
-    # plot_heatmaps(
-    #     "dweibull-voters-range-50-trials",
-    #     f"dweibull-voters-range-50-trials",
-    #     range(2, 8),
-    #     {},
-    #     suptitle=f"double Weibull voters"
-    # )
+    plot_heatmaps(
+        "dweibull-voters-range-50-trials",
+        f"dweibull-voters-range-50-trials",
+        range(2, 8),
+        {},
+        suptitle=f"double Weibull voters"
+    )
 
-    # for pert in (0.002, 0.005):
-    #     plot_heatmaps(
-    #         "pert-middle-values-50-trials",
-    #         f"pert-middle-values-50-trials-{pert}",
-    #         range(2, 8),
-    #         {
-    #             "perturb_stdev": pert,
-    #         },
-    #         suptitle=f"Perturbation noise, $\sigma^2 = {pert}$"
-    #     )
-    # for pert in (0.0001, 0.001, 0.002, 0.005, 0.01):
-    #     plot_heatmaps(
-    #         "pert-range-1-trial",
-    #         f"pert-small-k-range-1-trial-{pert}",
-    #         range(2, 8),
-    #         {
-    #             "perturb_stdev": pert,
-    #         },
-    #         suptitle=f"$\sigma^2 = {pert}$"
-    #     )
-    #     plot_heatmaps(
-    #         "pert-range-1-trial",
-    #         f"pert-large-k-range-1-trial-{pert}",
-    #         [8, 9, 10, 15, 25, 50],
-    #         {
-    #             "perturb_stdev": pert,
-    #         },
-    #         # suptitle=f"Perturbation noise, $\sigma^2 = {pert}$"
-    #     )
+    for pert in (0.002, 0.005):
+        plot_heatmaps(
+            "pert-middle-values-50-trials",
+            f"pert-middle-values-50-trials-{pert}",
+            range(2, 8),
+            {
+                "perturb_stdev": pert,
+            },
+            suptitle=f"Perturbation noise, $\sigma^2 = {pert}$"
+        )
+    for pert in (0.0001, 0.001, 0.002, 0.005, 0.01):
+        plot_heatmaps(
+            "pert-range-1-trial",
+            f"pert-small-k-range-1-trial-{pert}",
+            range(2, 8),
+            {
+                "perturb_stdev": pert,
+            },
+            suptitle=f"$\sigma^2 = {pert}$"
+        )
+        plot_heatmaps(
+            "pert-range-1-trial",
+            f"pert-large-k-range-1-trial-{pert}",
+            [8, 9, 10, 15, 25, 50],
+            {
+                "perturb_stdev": pert,
+            },
+            # suptitle=f"Perturbation noise, $\sigma^2 = {pert}$"
+        )
 
-    # plot_noisy_convergence()
-    # plot_cdf_bounds()
-    # plot_mixture_grid()
+    plot_noisy_convergence()
+    plot_cdf_bounds()
+    plot_mixture_grid()
     plot_voter_pdfs()

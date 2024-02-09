@@ -258,213 +258,213 @@ if __name__ == "__main__":
     # plt.imshow(np.log(1 + hists.T), cmap='afmhot_r', aspect='auto', interpolation='nearest')
     # plt.show()
 
-    # run_experiment(
-    #     'bounded-support-eps-range-symmetry-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     variable_args={
-    #         'k': range(2, 11),
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True, False],
-    #     },
-    #     static_args={
-    #         'min': 1/4,
-    #         'max': 3/4,
-    #         'initial_dsn': stats.uniform(1/4, 1/2)
-    #     }
-    # )
+    run_experiment(
+        'bounded-support-eps-range-symmetry-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': range(2, 11),
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True, False],
+        },
+        static_args={
+            'min': 1/4,
+            'max': 3/4,
+            'initial_dsn': stats.uniform(1/4, 1/2)
+        }
+    )
 
-    # run_experiment(
-    #     'eps-range-1-trial',
-    #     n=100_000, gens=200, trials=1, threads=args.threads,
-    #     variable_args={
-    #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True, False]
-    #     }
-    # )
+    run_experiment(
+        'eps-range-1-trial',
+        n=100_000, gens=200, trials=1, threads=args.threads,
+        variable_args={
+            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True, False]
+        }
+    )
 
-    # run_experiment(
-    #     'eps-range-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     variable_args={
-    #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True, False]
-    #     }
-    # )
+    run_experiment(
+        'eps-range-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True, False]
+        }
+    )
 
-    # run_experiment(
-    #     'k-2-3-4-many-epsilon-symmetry-50-trials',
-    #     n=100_000, gens=200, trials=50, threads=args.threads,
-    #     variable_args={
-    #         'k': range(2, 5),
-    #         'uniform_eps': [0, 0.00001, 0.0001, 0.001, 0.01, 1/10, 1/4, 1/3, 1/2]
-    #     },
-    #     static_args={
-    #         'symmetry': True
-    #     }
-    # )
+    run_experiment(
+        'k-2-3-4-many-epsilon-symmetry-50-trials',
+        n=100_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': range(2, 5),
+            'uniform_eps': [0, 0.00001, 0.0001, 0.001, 0.01, 1/10, 1/4, 1/3, 1/2]
+        },
+        static_args={
+            'symmetry': True
+        }
+    )
 
-    # run_experiment(
-    #     'multiple-ks-50-trials',
-    #     n=50_000, gens=200, trials=50, threads=args.threads,
-    #     variable_args={
-    #         'k': [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (3, 5), (4, 5)],
-    #         'uniform_eps': [0, 0.01, 0.1],
-    #         'symmetry': [True, False]
-    #     },
-    # )
+    run_experiment(
+        'multiple-ks-50-trials',
+        n=50_000, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': [(2, 3, 4), (3, 4, 5), (4, 5, 6), (5, 6, 7), (3, 5), (4, 5)],
+            'uniform_eps': [0, 0.01, 0.1],
+            'symmetry': [True, False]
+        },
+    )
 
-    # run_experiment(
-    #     'small-sample-eps-range-50-trials',
-    #     n=50, gens=200, trials=50, threads=args.threads,
-    #     variable_args={
-    #         'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #         'uniform_eps': [0, 0.001, 0.01, 0.1],
-    #         'symmetry': [True, False]
-    #     },
-    # )
+    run_experiment(
+        'small-sample-eps-range-50-trials',
+        n=50, gens=200, trials=50, threads=args.threads,
+        variable_args={
+            'k': [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            'uniform_eps': [0, 0.001, 0.01, 0.1],
+            'symmetry': [True, False]
+        },
+    )
 
-    # run_experiment(
-    #     'k-mixture-grid',
-    #     n=100_000, gens=100, trials=1, threads=args.threads,
-    #     variable_args={
-    #         'k_fracs': [(p3, p4)
-    #                     for p3 in np.linspace(0, 1, 41)
-    #                         for p4 in np.linspace(0, 1, 41)
-    #                     if p3 + p4 <= 1],
-    #     },
-    #     static_args={
-    #         'k': (3, 4, 5),
-    #         'symmetry': True,
-    #         'uniform_eps': 0
-    #     }
-    # )
+    run_experiment(
+        'k-mixture-grid',
+        n=100_000, gens=100, trials=1, threads=args.threads,
+        variable_args={
+            'k_fracs': [(p3, p4)
+                        for p3 in np.linspace(0, 1, 41)
+                            for p4 in np.linspace(0, 1, 41)
+                        if p3 + p4 <= 1],
+        },
+        static_args={
+            'k': (3, 4, 5),
+            'symmetry': True,
+            'uniform_eps': 0
+        }
+    )
 
     # VARIANTS
 
-    # run_experiment(
-    #     "pert-range-50-trials",
-    #     n=100_000,
-    #     gens=200,
-    #     trials=50,
-    #     threads=args.threads,
-    #     variable_args={
-    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #         "perturb_stdev": [0.0001, 0.001, 0.01],
-    #     },
-    #     static_args={"symmetry": False},
-    # )
+    run_experiment(
+        "pert-range-50-trials",
+        n=100_000,
+        gens=200,
+        trials=50,
+        threads=args.threads,
+        variable_args={
+            "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            "perturb_stdev": [0.0001, 0.001, 0.01],
+        },
+        static_args={"symmetry": False},
+    )
 
-    # run_experiment(
-    #     "top-2-range-50-trials",
-    #     n=100_000,
-    #     gens=200,
-    #     trials=50,
-    #     threads=args.threads,
-    #     variable_args={
-    #         "k": [3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #     },
-    #     static_args={"symmetry": False, "h": 2},
-    # )
+    run_experiment(
+        "top-2-range-50-trials",
+        n=100_000,
+        gens=200,
+        trials=50,
+        threads=args.threads,
+        variable_args={
+            "k": [3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+        },
+        static_args={"symmetry": False, "h": 2},
+    )
 
-    # run_experiment(
-    #     "top-3-range-50-trials",
-    #     n=100_000,
-    #     gens=200,
-    #     trials=50,
-    #     threads=args.threads,
-    #     variable_args={
-    #         "k": [3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #     },
-    #     static_args={"symmetry": False, "h": 3},
-    # )
+    run_experiment(
+        "top-3-range-50-trials",
+        n=100_000,
+        gens=200,
+        trials=50,
+        threads=args.threads,
+        variable_args={
+            "k": [3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+        },
+        static_args={"symmetry": False, "h": 3},
+    )
 
-    # run_experiment(
-    #     "memory-range-50-trials",
-    #     n=100_000,
-    #     gens=200,
-    #     trials=50,
-    #     threads=args.threads,
-    #     variable_args={
-    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #         "memory": [1, 2, 3],
-    #     },
-    #     static_args={
-    #         "symmetry": False,
-    #     },
-    # )
+    run_experiment(
+        "memory-range-50-trials",
+        n=100_000,
+        gens=200,
+        trials=50,
+        threads=args.threads,
+        variable_args={
+            "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            "memory": [1, 2, 3],
+        },
+        static_args={
+            "symmetry": False,
+        },
+    )
 
-    # beta_2 = stats.beta(2, 2)
-    # beta_half = stats.beta(0.5, 0.5)
-    # dweibull = stats.dweibull(c=4, loc=0.5, scale=0.3)
+    beta_2 = stats.beta(2, 2)
+    beta_half = stats.beta(0.5, 0.5)
+    dweibull = stats.dweibull(c=4, loc=0.5, scale=0.3)
 
-    # run_experiment(
-    #     "beta-2-voters-range-50-trials",
-    #     n=100_000,
-    #     gens=200,
-    #     trials=50,
-    #     threads=args.threads,
-    #     variable_args={
-    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #     },
-    #     static_args={
-    #         "voter_dsn": beta_2,
-    #         "symmetry": False,
-    #     },
-    # )
+    run_experiment(
+        "beta-2-voters-range-50-trials",
+        n=100_000,
+        gens=200,
+        trials=50,
+        threads=args.threads,
+        variable_args={
+            "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+        },
+        static_args={
+            "voter_dsn": beta_2,
+            "symmetry": False,
+        },
+    )
 
-    # run_experiment(
-    #     "beta-half-voters-range-50-trials",
-    #     n=100_000,
-    #     gens=200,
-    #     trials=50,
-    #     threads=args.threads,
-    #     variable_args={
-    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #     },
-    #     static_args={
-    #         "voter_dsn": beta_half,
-    #         "symmetry": False,
-    #     },
-    # )
-    # run_experiment(
-    #     "dweibull-voters-range-50-trials",
-    #     n=100_000,
-    #     gens=200,
-    #     trials=50,
-    #     threads=args.threads,
-    #     variable_args={
-    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #     },
-    #     static_args={
-    #         "voter_dsn": dweibull,
-    #         "symmetry": False,
-    #     },
-    # )
+    run_experiment(
+        "beta-half-voters-range-50-trials",
+        n=100_000,
+        gens=200,
+        trials=50,
+        threads=args.threads,
+        variable_args={
+            "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+        },
+        static_args={
+            "voter_dsn": beta_half,
+            "symmetry": False,
+        },
+    )
+    run_experiment(
+        "dweibull-voters-range-50-trials",
+        n=100_000,
+        gens=200,
+        trials=50,
+        threads=args.threads,
+        variable_args={
+            "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+        },
+        static_args={
+            "voter_dsn": dweibull,
+            "symmetry": False,
+        },
+    )
 
-    # run_experiment(
-    #     "pert-middle-values-50-trials",
-    #     n=100_000,
-    #     gens=200,
-    #     trials=50,
-    #     threads=args.threads,
-    #     variable_args={
-    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #         "perturb_stdev": [0.002, 0.005],
-    #     },
-    #     static_args={"symmetry": False},
-    # )
+    run_experiment(
+        "pert-middle-values-50-trials",
+        n=100_000,
+        gens=200,
+        trials=50,
+        threads=args.threads,
+        variable_args={
+            "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            "perturb_stdev": [0.002, 0.005],
+        },
+        static_args={"symmetry": False},
+    )
 
-    # run_experiment(
-    #     "pert-range-1-trial",
-    #     n=100_000,
-    #     gens=200,
-    #     trials=1,
-    #     threads=args.threads,
-    #     variable_args={
-    #         "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
-    #         "perturb_stdev": [0.0001, 0.001, 0.002, 0.005, 0.01],
-    #     },
-    #     static_args={"symmetry": False},
-    # )
+    run_experiment(
+        "pert-range-1-trial",
+        n=100_000,
+        gens=200,
+        trials=1,
+        threads=args.threads,
+        variable_args={
+            "k": [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25, 50],
+            "perturb_stdev": [0.0001, 0.001, 0.002, 0.005, 0.01],
+        },
+        static_args={"symmetry": False},
+    )
