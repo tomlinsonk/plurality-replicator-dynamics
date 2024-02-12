@@ -118,7 +118,7 @@ def plot_cdf_bounds():
                 rotation=rotations[i][j],
                 rotation_mode="anchor",
             )
-        axes[i].legend(fontsize=9, loc="best")
+        axes[i].legend(fontsize=9, loc="best", handlelength=1)
         axes[i].set_xlabel("t")
         axes[i].set_title(f"$k = {k}$")
         axes[i].set_ylim(-0.02, 0.5)
@@ -209,7 +209,8 @@ def plot_noisy_convergence():
 
         axes[i].set_yscale("log")
         axes[i].set_xlabel("t")
-        axes[i].legend(fontsize=9, bbox_to_anchor=legend_pos[i], loc="center left")
+        axes[i].legend(fontsize=9, bbox_to_anchor=legend_pos[i], 
+                       loc="center left", handlelength=1)
         axes[i].set_title(f"$k={k}$")
 
     axes[0].set_ylabel("$F_{{k, t}}(x)$")
