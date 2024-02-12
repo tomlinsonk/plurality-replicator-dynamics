@@ -85,7 +85,7 @@ def plot_cdf_bounds():
 
     rotations = ((-42, -49, -20), (-28, -45, -19), (-3, -1, -1))
 
-    labels = ("Thm 2 (exact)", "Thm 3 (bound)", "Thm 4 (bound)")
+    labels = ("Thm 2.3 (exact)", "Thm 2.5 (bound)", "Thm 2.8 (bound)")
 
     max_ts = (7, 20, 40)
 
@@ -163,7 +163,7 @@ def plot_noisy_convergence():
         ("#75888a", "#8e50aa", "#99c15f", "#b45948"),
     )
 
-    labels = ("Thm 7 (exact)", "Thm 8 (bound)", "Thm 9 (bound)")
+    labels = ("Thm 3.4 (exact)", "Thm 3.7 (bound)", "Thm 3.10 (bound)")
 
     text_pos = (
         ((15.5, 0.00029), (15.5, 0.0012), (15.5, 0.006), (15.5, 0.036)),

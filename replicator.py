@@ -4,7 +4,6 @@ import itertools
 from multiprocessing import Pool
 import os
 import pickle
-from matplotlib import pyplot as plt
 import numpy as np
 from scipy import stats
 from tqdm import tqdm
@@ -253,10 +252,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--threads", type=int)
     args = parser.parse_args()
-
-    # hists, edges = replicator([3, 4, 5], 100_000, 200, symmetry=True, k_fracs=(0.1, 0.3))
-    # plt.imshow(np.log(1 + hists.T), cmap='afmhot_r', aspect='auto', interpolation='nearest')
-    # plt.show()
 
     run_experiment(
         'bounded-support-eps-range-symmetry-50-trials',
