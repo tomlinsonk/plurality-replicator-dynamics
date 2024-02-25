@@ -45,7 +45,7 @@ def plot_heatmaps(
     if suptitle is not None:
         axes[0].set_ylabel(suptitle, fontweight="bold")
 
-    plt.savefig(f"plots/{plot_name}.pdf", bbox_inches="tight", dpi=500)
+    plt.savefig(f"plots/{plot_name}.pdf", bbox_inches="tight", dpi=500, pad_inches=0)
     if show:
         plt.show()
     plt.close()
@@ -127,7 +127,7 @@ def plot_cdf_bounds():
 
     plt.subplots_adjust(wspace=0.2)
     # plt.show()
-    plt.savefig("plots/pred-vs-sim.pdf", bbox_inches="tight")
+    plt.savefig("plots/pred-vs-sim.pdf", bbox_inches="tight", pad_inches=0)
     plt.close()
 
 
@@ -213,9 +213,9 @@ def plot_noisy_convergence():
                        loc="center left", handlelength=1)
         axes[i].set_title(f"$k={k}$")
 
-    axes[0].set_ylabel("$F_{{k, t}}(x)$")
+    axes[0].set_ylabel("$F_{{k, t}}^\epsilon(x)$")
     # plt.show()
-    plt.savefig("plots/pred-vs-sim-noisy.pdf", bbox_inches="tight")
+    plt.savefig("plots/pred-vs-sim-noisy.pdf", bbox_inches="tight", pad_inches=0)
     plt.close()
 
 
@@ -251,7 +251,7 @@ def plot_mixture_grid():
     plt.xlabel("$k = 3$ fraction")
     plt.ylabel("$k = 4$ fraction")
     plt.colorbar(label="mode at $t = 100$")
-    plt.savefig("plots/k-mixture-heatmap.pdf", bbox_inches="tight")
+    plt.savefig("plots/k-mixture-heatmap.pdf", bbox_inches="tight", pad_inches=0)
     plt.close()
 
 
@@ -377,7 +377,7 @@ def plot_voter_pdfs():
     axes[2].set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
     axes[2].set_xlim(0, 1)
 
-    plt.savefig(f"plots/voter_dsn_pdfs.pdf", bbox_inches="tight", dpi=500)
+    plt.savefig(f"plots/voter_dsn_pdfs.pdf", bbox_inches="tight", dpi=500, pad_inches=0)
     plt.close()
 
 

@@ -1,5 +1,9 @@
 # Code for Replicating Electoral Success
 
+This repository accompanies the paper
+
+> Kiran Tomlinson, Tanvi Namjoshi, Johan Ugander, and Jon Kleinberg. Replicating Electoral Success. 2024.
+
 We have included all code for running simulations, generating plots, and all results files.
 
 # Contents
